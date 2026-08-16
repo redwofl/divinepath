@@ -49,6 +49,17 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
   // Pending interstitial delay so it can be cancelled on restart/dispose
   Timer? _interstitialTimer;
 
+  // Debounce for double-taps: after popping a bubble, ignore a second tap that
+  // lands within a short window at (nearly) the same spot, so a rapid
+  // double-tap doesn't also pop the next bubble that falls into place.
+  int? _lastPopTimestamp;
+  Offset? _lastPopPosition;
+  // Window is longer than the 350ms pop animation: a rapid re-tap on the same
+  // spot lands AFTER the first bubble is removed, so it would hit the next
+  // bubble that fell into place. 600ms covers a natural double-tap / re-tap.
+  static const int _doubleTapWindowMs = 600;
+  static const double _doubleTapRadius = 90;
+
   late AnimationController _gameLoopController;
   Timer? _spawnTimer;
   final Random _random = Random();
@@ -144,6 +155,10 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
       _wasManualQuit = false;
     });
 
+    // Reset double-tap debounce so the first tap of a new round always counts
+    _lastPopTimestamp = null;
+    _lastPopPosition = null;
+
     // Start gentle ambient meditation music on loop
     AudioService.instance.playAmbientSound('assets/sounds/ambient.mp3', isAsset: true);
 
@@ -177,6 +192,7 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
         x: x,
         y: -bubbleSize,
         size: bubbleSize,
+        // TEMP TEST: 15% speed so the double-tap test is deterministic
         speed: _baseSpeed + _random.nextDouble() * 0.5,
         color: _getRandomDivineColor(),
       ));
@@ -262,13 +278,27 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
   void _popBubble(_FallingBubble bubble) {
     if (_isGameOver || bubble.isPopping) return;
 
+    final cx = bubble.x + bubble.size / 2;
+    final cy = bubble.y + bubble.size / 2;
+
+    // Ignore the second tap of a rapid double-tap on (nearly) the same spot.
+    // Without this, the second tap lands on whichever bubble has fallen into
+    // that position (the first one is already animating away) and pops it too.
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final tapPosition = Offset(cx, cy);
+    if (_lastPopTimestamp != null &&
+        now - _lastPopTimestamp! < _doubleTapWindowMs &&
+        _lastPopPosition != null &&
+        (tapPosition - _lastPopPosition!).distance < _doubleTapRadius) {
+      return;
+    }
+    _lastPopTimestamp = now;
+    _lastPopPosition = tapPosition;
+
     // Play pop sound (via SFX player so ambient continues uninterrupted)
     if (!_isMuted) {
       AudioService.instance.playSfx('assets/sounds/pop.mp3', isAsset: true);
     }
-
-    final cx = bubble.x + bubble.size / 2;
-    final cy = bubble.y + bubble.size / 2;
 
     // Spawn floating +1 score text
     _scorePopups.add(_ScorePopup(
@@ -570,9 +600,62 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
     _startGame();
   }
 
+  /// True while a rewarded ad (extra life / +1 mala) is loading or playing, so
+  /// a single tap opens exactly one ad.
+  bool _isWatchingAd = false;
+
+  /// Ensures a rewarded ad is loaded and ready to show. If it isn't ready yet
+  /// it is queued and this waits for it (up to ~20s), then returns true so the
+  /// caller can present it automatically — no "tap again" needed.
+  Future<bool> _ensureRewardedAdReady(ScaffoldMessengerState messenger) async {
+    if (!AdService.instance.isEnabled) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Reward ads are not available in this build',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+      return false;
+    }
+
+    if (AdService.instance.isRewardedReady) return true;
+
+    AdService.instance.loadRewarded();
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Preparing your reward ad… 🙏',
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+    final deadline = DateTime.now().add(const Duration(seconds: 20));
+    while (!AdService.instance.isRewardedReady) {
+      if (DateTime.now().isAfter(deadline)) break;
+      await Future.delayed(const Duration(milliseconds: 300));
+      if (!mounted) return false;
+    }
+    if (!AdService.instance.isRewardedReady) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Ad is not available right now. Please try again.',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
+
   /// Watch a rewarded ad to get an extra life (miss forgiveness).
   Future<void> _watchAdForExtraLife() async {
     final messenger = ScaffoldMessenger.of(context);
+
+    if (_isWatchingAd) return; // one ad at a time
 
     // Revive is only offered when the game ended from a missed bubble,
     // not when the player quit manually via the X button.
@@ -588,29 +671,11 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
       return;
     }
 
-    if (!AdService.instance.isEnabled) {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Reward ads are not available in this build',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-      return;
-    }
-
-    if (!AdService.instance.isRewardedReady) {
-      // Queue one up and ask the user to tap again once it's loaded
-      AdService.instance.loadRewarded();
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Preparing your reward ad — please tap again in a moment 🙏',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
+    setState(() => _isWatchingAd = true);
+    final ready = await _ensureRewardedAdReady(messenger);
+    if (!mounted) return;
+    if (!ready) {
+      setState(() => _isWatchingAd = false);
       return;
     }
 
@@ -619,23 +684,24 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
 
     final earned = await AdService.instance.showRewarded();
     if (!mounted) return;
+    setState(() => _isWatchingAd = false);
 
     if (earned) {
       _reviveGame();
       messenger.showSnackBar(
         SnackBar(
           backgroundColor: const Color(0xFF34D399),
-          content: const Text(
-            '🙏 Extra life granted! Keep going!',
+          content: Text(
+            Translations.get('extra_life_granted', locale: context.read<LocaleProvider>().localeCode),
             textAlign: TextAlign.center,
           ),
         ),
       );
     } else {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Ad is not available right now. Please try again.',
+            Translations.get('ad_not_available', locale: context.read<LocaleProvider>().localeCode),
             textAlign: TextAlign.center,
           ),
         ),
@@ -792,6 +858,7 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
   }
 
   Widget _buildStartScreen() {
+    final locCode = context.watch<LocaleProvider>().localeCode;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -821,9 +888,9 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
             ),
           ),
           const SizedBox(height: 32),
-          const Text(
-            'Divine Bubbles',
-            style: TextStyle(
+          Text(
+            Translations.get('divine_bubbles', locale: locCode),
+            style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -838,7 +905,7 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
           ),
           const SizedBox(height: 12),
           Text(
-            'Pop the divine names before they fall!',
+            Translations.get('pop_divine_names', locale: locCode),
             style: TextStyle(
               fontSize: 16,
               color: Colors.white.withOpacity(0.7),
@@ -846,7 +913,7 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            'Miss one and the game is over!',
+            Translations.get('miss_one_game_over', locale: locCode),
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withOpacity(0.5),
@@ -870,14 +937,14 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
                   ),
                 ],
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.play_arrow_rounded, color: Colors.white, size: 28),
-                  SizedBox(width: 8),
+                  const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 28),
+                  const SizedBox(width: 8),
                   Text(
-                    'Start Game',
-                    style: TextStyle(
+                    Translations.get('start_game', locale: locCode),
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -1152,6 +1219,7 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
   }
 
   Widget _buildGameOverScreen() {
+    final locCode = context.watch<LocaleProvider>().localeCode;
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -1174,9 +1242,9 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Game Over!',
-              style: TextStyle(
+            Text(
+              Translations.get('game_over', locale: locCode),
+              style: const TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -1184,7 +1252,7 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
             ),
             const SizedBox(height: 8),
             Text(
-              'A bubble was missed...',
+              Translations.get('bubble_missed', locale: locCode),
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white.withOpacity(0.6),
@@ -1210,9 +1278,9 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
               ),
               child: Column(
                 children: [
-                  const Text(
-                    'Your Score',
-                    style: TextStyle(fontSize: 14, color: Colors.white54),
+                  Text(
+                    Translations.get('your_score', locale: locCode),
+                    style: const TextStyle(fontSize: 14, color: Colors.white54),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -1231,13 +1299,13 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
                   ),
                   if (_score >= _highScore && _score > 0) ...[
                     const SizedBox(height: 8),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.emoji_events_rounded, color: Color(0xFFF59E0B), size: 20),
-                        SizedBox(width: 6),
+                        const Icon(Icons.emoji_events_rounded, color: Color(0xFFF59E0B), size: 20),
+                        const SizedBox(width: 6),
                         Text(
-                          'New High Score!',
+                          Translations.get('new_high_score', locale: locCode),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -1270,13 +1338,13 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
                     ),
                   ],
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.favorite_rounded, color: Color(0xFFFF6B6B), size: 22),
-                    SizedBox(width: 10),
+                    const Icon(Icons.favorite_rounded, color: Color(0xFFFF6B6B), size: 22),
+                    const SizedBox(width: 10),
                     Text(
-                      'Watch Ad • Extra Life',
+                      Translations.get('watch_ad_extra_life', locale: locCode),
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -1306,13 +1374,13 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
                     ),
                   ],
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.replay_rounded, color: Colors.white, size: 24),
-                    SizedBox(width: 8),
+                    const Icon(Icons.replay_rounded, color: Colors.white, size: 24),
+                    const SizedBox(width: 8),
                     Text(
-                      'Play Again',
+                      Translations.get('play_again', locale: locCode),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -1333,9 +1401,9 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
                   _isGameOver = false;
                 });
               },
-              child: const Text(
-                'Back to Menu',
-                style: TextStyle(color: Colors.white54, fontSize: 14),
+              child: Text(
+                Translations.get('back_to_menu', locale: locCode),
+                style: const TextStyle(color: Colors.white54, fontSize: 14),
               ),
             ),
           ],

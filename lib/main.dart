@@ -23,6 +23,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Helpers.setNavigatorKey(Helpers.navigatorKey);
 
+  // Load saved haptics preference before the UI builds
+  await Helpers.loadHapticsSetting();
+
   // Try to initialize Firebase (handles missing config gracefully)
   try {
     await FirebaseService.instance.initialize();
@@ -49,6 +52,13 @@ void main() async {
 
   try {
     await NotificationService.instance.initialize();
+    // Ask for notification permission at startup (Android 13+)
+    await NotificationService.instance.requestPermissions();
+    // Make sure daily reminders are scheduled if notifications are enabled
+    if (await NotificationService.instance.isNotificationsEnabled()) {
+      await NotificationService.instance.scheduleMorningReminder();
+      await NotificationService.instance.scheduleEveningReminder();
+    }
   } catch (e) {
     debugPrint('Notifications not available: $e');
   }
@@ -169,7 +179,7 @@ class DivinePathApp extends StatelessWidget {
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
           return MaterialApp.router(
-            title: 'DivinePath AI',
+            title: 'DivinePath',
             debugShowCheckedModeBanner: false,
             theme: themeProvider.lightTheme,
             darkTheme: themeProvider.darkTheme,

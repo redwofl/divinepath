@@ -5,9 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/stories_provider.dart';
+import '../../models/story_model.dart';
 import '../../services/ad_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
+import '../../utils/translations.dart';
 import '../../widgets/common/language_switcher_button.dart';
 
 class StoriesListScreen extends StatefulWidget {
@@ -127,9 +129,20 @@ class _StoriesListScreenState extends State<StoriesListScreen>
     return match['icon'] as String;
   }
 
+  /// Story title in the current app language (falls back to English).
+  String _localizedTitle(StoryModel story) {
+    final isHindi = context.read<LocaleProvider>().isHindi;
+    return isHindi &&
+            story.titleHindi != null &&
+            story.titleHindi!.trim().isNotEmpty
+        ? story.titleHindi!
+        : story.title;
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<StoriesProvider>();
+    final locCode = context.watch<LocaleProvider>().localeCode;
     final stories = provider.stories;
     final hasStories = stories.isNotEmpty;
 
@@ -183,19 +196,59 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemCount: AppConstants.storyCategories.length + 1,
+                        itemCount: AppConstants.storyCategories.length + 2,
                         itemBuilder: (context, index) {
                           if (index == 0) {
                             return Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: _buildCategoryChip(
-                                '🌟 All',
+                                '🌟 ${Translations.get('all_stories', locale: locCode)}',
                                 null,
                                 provider.selectedCategory == null,
                               ),
                             );
                           }
-                          final cat = AppConstants.storyCategories[index - 1];
+                          if (index == 1) {
+                            // Aartis entry — opens the Aarti reading section
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: GestureDetector(
+                                onTap: () => context.push('/aarti'),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFFDC2626),
+                                        Color(0xFFF59E0B),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(22),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFFDC2626)
+                                            .withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    '🪔 ${Translations.get('aarti_stories_chip', locale: locCode)}',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          final cat = AppConstants.storyCategories[index - 2];
                           final name = cat['name'] as String;
                           final icon = cat['icon'] as String;
                           final isSelected = provider.selectedCategory == name;
@@ -270,7 +323,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        'All Stories',
+                        Translations.get('all_stories', locale: locCode),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -279,7 +332,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                       ),
                       const Spacer(),
                       Text(
-                        '${stories.length} stories',
+                        Translations.t('stories_count', locale: locCode, params: {'count': '${stories.length}'}),
                         style: TextStyle(
                           fontSize: 13,
                           color: Theme.of(context).colorScheme.outline,
@@ -358,6 +411,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
   // ─── GRADIENT HEADER ───────────────────────────────────────────────
 
   Widget _buildGradientHeader(StoriesProvider provider) {
+    final locCode = context.read<LocaleProvider>().localeCode;
     final hasStories = provider.stories.isNotEmpty;
     final scheme = Theme.of(context).colorScheme;
     return Container(
@@ -438,7 +492,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Sacred Stories',
+                            Translations.get('sacred_stories', locale: locCode),
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -448,7 +502,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Explore timeless wisdom from ancient scriptures',
+                            Translations.get('sacred_stories_subtitle', locale: locCode),
                             style: TextStyle(
                               fontSize: 13,
                               color: scheme.onSurfaceVariant,
@@ -488,13 +542,13 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                       _buildHeaderStat(
                         Icons.menu_book_rounded,
                         '${provider.stories.length}',
-                        'Stories',
+                        Translations.get('stories_stat', locale: locCode),
                       ),
                       const SizedBox(width: 20),
                       _buildHeaderStat(
                         Icons.bookmark_rounded,
                         '${provider.bookmarks.length}',
-                        'Saved',
+                        Translations.get('saved_stat', locale: locCode),
                       ),
                       const Spacer(),
                       // Language button
@@ -539,6 +593,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
   // ─── SEARCH FIELD ──────────────────────────────────────────────────
 
   Widget _buildSearchField() {
+    final locCode = context.read<LocaleProvider>().localeCode;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -554,8 +609,13 @@ class _StoriesListScreenState extends State<StoriesListScreen>
       child: TextField(
         controller: _searchController,
         onChanged: (q) => context.read<StoriesProvider>().search(q),
+        style: const TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 15,
+        ),
+        cursorColor: AppColors.primary,
         decoration: InputDecoration(
-          hintText: 'Search stories...',
+          hintText: Translations.get('search_stories_hint', locale: locCode),
           hintStyle: TextStyle(color: AppColors.textLight.withOpacity(0.7)),
           prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary),
           suffixIcon: _searchController.text.isNotEmpty
@@ -641,6 +701,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
   // ─── FEATURED CAROUSEL ───────────────────────────────────────────
 
   Widget _buildFeaturedCarousel(List stories) {
+    final locCode = context.read<LocaleProvider>().localeCode;
     final carouselCount = stories.length.clamp(1, _carouselStoryCount);
 
     // Start auto-scroll timer when carousel is built
@@ -664,9 +725,9 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
-                'Featured Stories',
-                style: TextStyle(
+              Text(
+                Translations.get('featured_stories', locale: locCode),
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -681,7 +742,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                 child: Row(
                   children: [
                     Text(
-                      'Swipe',
+                      Translations.get('swipe_hint', locale: locCode),
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.primary.withOpacity(0.6),
@@ -847,7 +908,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                         const Spacer(),
                         // Title
                         Text(
-                          story.title,
+                          _localizedTitle(story),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -934,6 +995,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
   }
 
   Widget _buildStoryCard(story) {
+    final locCode = context.read<LocaleProvider>().localeCode;
     final color = _getCategoryColor(story.category);
     final icon = _getCategoryIcon(story.category);
     // Use the Hindi content when the app language is Hindi (and a Hindi
@@ -1002,7 +1064,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        story.readingTimeMinutes <= 5 ? 'Quick' : '${story.readingTimeMinutes} min',
+                        story.readingTimeMinutes <= 5 ? Translations.get('quick_badge', locale: locCode) : '${story.readingTimeMinutes} ${Translations.get('min_short', locale: locCode)}',
                         style: const TextStyle(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
@@ -1039,7 +1101,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    story.title,
+                    _localizedTitle(story),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -1100,6 +1162,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
     Color color,
     String content,
   ) {
+    final locCode = context.read<LocaleProvider>().localeCode;
     final isExpanded = _expandedCardIds.contains(storyId);
     // Show the toggle whenever there's a real story to reveal
     final needsToggle = content.length > 80;
@@ -1149,7 +1212,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    isExpanded ? 'Show less' : 'Read full story',
+                    isExpanded ? Translations.get('show_less', locale: locCode) : Translations.get('read_full_story', locale: locCode),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -1225,6 +1288,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
   // ─── EMPTY STATE ───────────────────────────────────────────────────
 
   Widget _buildEmptyState(StoriesProvider provider) {
+    final locCode = context.read<LocaleProvider>().localeCode;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -1257,8 +1321,8 @@ class _StoriesListScreenState extends State<StoriesListScreen>
             const SizedBox(height: 20),
             Text(
               provider.selectedCategory != null
-                  ? 'No stories in this category'
-                  : 'No stories available',
+                  ? Translations.get('no_stories_category', locale: locCode)
+                  : Translations.get('no_stories_available', locale: locCode),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -1268,8 +1332,8 @@ class _StoriesListScreenState extends State<StoriesListScreen>
             const SizedBox(height: 8),
             Text(
               provider.selectedCategory != null
-                  ? 'Try a different category'
-                  : 'Stories will appear here once loaded',
+                  ? Translations.get('try_different_category', locale: locCode)
+                  : Translations.get('stories_will_appear', locale: locCode),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -1286,7 +1350,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                   _staggerController.forward();
                 },
                 icon: const Icon(Icons.refresh_rounded, size: 18),
-                label: const Text('Show All Stories'),
+                label: Text(Translations.get('show_all_stories', locale: locCode)),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
@@ -1329,6 +1393,7 @@ class StoryDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locCode = context.read<LocaleProvider>().localeCode;
     final provider = context.watch<StoriesProvider>();
     final story = provider.stories.firstWhere(
       (s) => s.id == storyId,
@@ -1343,6 +1408,14 @@ class StoryDetailScreen extends StatelessWidget {
             story.contentHindi!.trim().isNotEmpty
         ? story.contentHindi!
         : story.content;
+    // Title in the current app language; show the other language as a
+    // smaller subtitle beneath it.
+    final mainTitle = isHindi &&
+            story.titleHindi != null &&
+            story.titleHindi!.trim().isNotEmpty
+        ? story.titleHindi!
+        : story.title;
+    final altTitle = mainTitle == story.title ? story.titleHindi : story.title;
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -1460,7 +1533,7 @@ class StoryDetailScreen extends StatelessWidget {
 
                   // Title
                   Text(
-                    story.title,
+                    mainTitle,
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -1468,10 +1541,10 @@ class StoryDetailScreen extends StatelessWidget {
                       height: 1.2,
                     ),
                   ),
-                  if (story.titleHindi != null) ...[
+                  if (altTitle != null && altTitle.trim().isNotEmpty) ...[
                     const SizedBox(height: 6),
                     Text(
-                      story.titleHindi!,
+                      altTitle,
                       style: TextStyle(
                         fontSize: 18,
                         color: scheme.onSurfaceVariant,
@@ -1595,7 +1668,7 @@ class StoryDetailScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            'Story content coming soon',
+                            Translations.get('story_coming_soon', locale: locCode),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -1604,7 +1677,7 @@ class StoryDetailScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'The full story text for this tale will be added shortly.',
+                            Translations.get('story_coming_soon_desc', locale: locCode),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13,

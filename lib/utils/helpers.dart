@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 
 class Helpers {
@@ -196,20 +198,43 @@ class Helpers {
   static bool isPremiumEnabled = false;
 
   // Haptic feedback
+  static const String _hapticsPrefKey = 'haptics_enabled';
+  static bool hapticsEnabled = true;
+
+  /// Load the saved haptics preference (call once at startup)
+  static Future<void> loadHapticsSetting() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      hapticsEnabled = prefs.getBool(_hapticsPrefKey) ?? true;
+    } catch (_) {}
+  }
+
+  /// Persist the haptics preference
+  static Future<void> setHapticsEnabled(bool value) async {
+    hapticsEnabled = value;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_hapticsPrefKey, value);
+    } catch (_) {}
+  }
+
   static void lightHaptic() {
-    // HapticFeedback.lightImpact();
+    if (!hapticsEnabled) return;
+    HapticFeedback.lightImpact();
   }
 
   static void mediumHaptic() {
-    // HapticFeedback.mediumImpact();
+    if (!hapticsEnabled) return;
+    HapticFeedback.mediumImpact();
   }
 
   static void heavyHaptic() {
-    // HapticFeedback.heavyImpact();
+    if (!hapticsEnabled) return;
+    HapticFeedback.heavyImpact();
   }
 
   // Share text
   static String getShareText(String text) {
-    return '$text\n\nShared via DivinePath AI - Your Spiritual Companion';
+    return '$text\n\nShared via DivinePath - Your Spiritual Companion';
   }
 }

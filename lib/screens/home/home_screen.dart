@@ -37,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final mantraProvider = context.watch<MantraProvider>();
     final themeProvider = context.watch<ThemeProvider>();
     final user = userProvider.user;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final localeProvider = context.watch<LocaleProvider>();
     final locCode = localeProvider.localeCode;
@@ -69,17 +70,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         '$greeting,',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
-                          color: AppColors.textSecondary,
+                          color: isDark ? AppColors.textLight : AppColors.textSecondary,
                         ),
                       ),
                       Text(
                         userName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                         ),
                       ),
                     ],
@@ -89,11 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Language switcher
                       GestureDetector(
                         onTap: () => _showLanguagePicker(context, localeProvider),
-                        child: Container(
+                        child:                       Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: AppColors.secondary,
+                            color: isDark ? AppColors.darkCard : AppColors.secondary,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -116,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: AppColors.secondary,
+                            color: isDark ? AppColors.darkCard : AppColors.secondary,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -171,17 +172,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Text(
                                 '$streak',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                                 ),
                               ),
                               Text(
                       Translations.get('day_streak', locale: locCode),
                       style: TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.textSecondary,
+                                  color: isDark ? AppColors.textLight : AppColors.textSecondary,
                                 ),
                               ),
                             ],
@@ -205,10 +206,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(width: 8),
                               Text(
                                 Helpers.formatNumber(dailyCount),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                                 ),
                               ),
                             ],
@@ -218,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Translations.get('todays_chants', locale: locCode),
                             style: TextStyle(
                               fontSize: 12,
-                              color: AppColors.textSecondary,
+                              color: isDark ? AppColors.textLight : AppColors.textSecondary,
                             ),
                           ),
                         ],
@@ -291,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
+                              color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                             ),
                           ),
                           Text(
@@ -310,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: LinearProgressIndicator(
                           value: dailyGoal > 0 ? dailyCount / dailyGoal : 0,
                           minHeight: 8,
-                          backgroundColor: AppColors.secondary,
+                          backgroundColor: isDark ? AppColors.darkCard : AppColors.secondary,
                           valueColor: const AlwaysStoppedAnimation<Color>(
                             AppColors.primary,
                           ),
@@ -345,7 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 12),
@@ -400,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 12),
@@ -435,6 +436,71 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 16),
+
+              // Aarti section card
+              GestureDetector(
+                onTap: () => context.push('/aarti'),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFDC2626), Color(0xFFF59E0B)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFDC2626).withOpacity(0.3),
+                        blurRadius: 14,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Center(
+                          child: Text('🪔', style: TextStyle(fontSize: 24)),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              Translations.get('aartis', locale: locCode),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              Translations.get('aarti_home_subtitle', locale: locCode),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white.withOpacity(0.85),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.chevron_right_rounded,
+                          color: Colors.white),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 24),
 
               // Recent Activity
@@ -444,7 +510,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -452,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? AppColors.darkSurface : Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -468,7 +534,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: AppColors.secondary,
+                          color: isDark ? AppColors.darkCard : AppColors.secondary,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(Icons.auto_awesome_rounded,
@@ -481,16 +547,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               Translations.t('chanted_times', locale: locCode, params: {'count': '${session.count}'}),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textPrimary,
+                                color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                               ),
                             ),
                             Text(
                               session.mantraName,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
-                                color: AppColors.textSecondary,
+                                color: isDark ? AppColors.textLight : AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -498,9 +564,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Text(
                         Helpers.timeAgo(session.timestamp),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textLight,
+                          color: isDark ? AppColors.textLight : AppColors.textLight,
                         ),
                       ),
                     ],

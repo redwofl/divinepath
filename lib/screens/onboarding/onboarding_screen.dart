@@ -214,9 +214,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           TextFormField(
             controller: _nameController,
             textCapitalization: TextCapitalization.words,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 15,
+            ),
+            cursorColor: AppColors.primary,
             decoration: InputDecoration(
               hintText: 'Enter your name',
-              prefixIcon: const Icon(Icons.person_outline_rounded),
+              hintStyle: const TextStyle(color: AppColors.textLight),
+              prefixIcon: const Icon(Icons.person_outline_rounded,
+                  color: AppColors.textSecondary),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(

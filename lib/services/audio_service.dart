@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AudioService {
   static final AudioService _instance = AudioService._internal();
@@ -43,6 +45,8 @@ class AudioService {
 
   /// Initialize audio service
   Future<void> initialize() async {
+    await _clearAssetCache();
+
     // Initialize TTS
     await _flutterTts.setLanguage('en-US');
     await _flutterTts.setSpeechRate(0.5);
@@ -54,6 +58,24 @@ class AudioService {
       _isTtsPlaying = false;
       ttsPlaying.value = false;
     });
+  }
+
+  /// just_audio caches asset files by path and never notices when the
+  /// underlying asset changes between app updates (e.g. replaced sounds).
+  /// Wipe that cache on every startup so the app always plays the audio
+  /// bundled in the current build. Safe: it is only a copy-on-first-play
+  /// cache and is recreated automatically.
+  Future<void> _clearAssetCache() async {
+    if (kIsWeb) return; // no file-system asset cache on web
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final cacheDir = Directory('${tempDir.path}/just_audio_cache');
+      if (cacheDir.existsSync()) {
+        cacheDir.deleteSync(recursive: true);
+      }
+    } catch (e) {
+      debugPrint('Error clearing just_audio asset cache: $e');
+    }
   }
 
   /// Set volume

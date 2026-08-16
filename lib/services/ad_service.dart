@@ -40,6 +40,12 @@ class AdService with WidgetsBindingObserver {
   Future<void> initialize() async {
     if (!isEnabled) return;
     _initialized = true;
+    // Use Start.io test ads during development: real MRAID creatives can fail
+    // to render on emulators ("mraid is not defined" in the ad WebView), which
+    // leaves the rewarded-video flow stuck at "Preparing your reward ad…".
+    // Test creatives are plain videos and display reliably. Must be disabled
+    // before release (see AppConfig.enableTestAds).
+    await _sdk.setTestAdsEnabled(AppConfig.enableTestAds);
     loadBannerAd();
     loadInterstitial();
   }
@@ -131,14 +137,19 @@ class AdService with WidgetsBindingObserver {
 
     final completer = _rewardCompleter;
     _rewardCompleter = null;
-    ad.dispose();
 
     if (completer == null) {
+      ad.dispose();
       loadRewarded();
       return false;
     }
+    // IMPORTANT: do not dispose the ad until the completer resolves. dispose()
+    // unregisters the SDK's event callbacks (including onVideoCompleted), so
+    // disposing here would swallow the video-completed event and the reward
+    // would never be granted (the completer would just time out).
     final earned = await completer.future
         .timeout(const Duration(seconds: 60), onTimeout: () => false);
+    ad.dispose();
     loadRewarded();
     return earned;
   }

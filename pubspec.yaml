@@ -62,6 +62,7 @@ dependencies:
   timezone: ^0.9.4
 
   # Utilities
+  path_provider: ^2.1.4
   intl: ^0.19.0
   connectivity_plus: ^6.1.0
   url_launcher: ^6.3.1
@@ -86,7 +87,7 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icons/app_icon.png"
-  adaptive_icon_background: "#F59E0B"
+  adaptive_icon_background: "#F17E03"
   adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
   web:
     generate: true

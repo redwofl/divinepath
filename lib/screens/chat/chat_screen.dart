@@ -449,10 +449,19 @@ class _ChatScreenState extends State<ChatScreen> {
                       if (!isUser) ...[
                         const SizedBox(width: 12),
                         GestureDetector(
-                          onTap: () => provider.startVoicePlayback(
-                              message.content),
+                          onTap: () {
+                            // Tap again to stop, tap to play
+                            if (provider.isVoicePlaying &&
+                                provider.voicePlayingMessageId == message.id) {
+                              provider.stopVoicePlayback();
+                            } else {
+                              provider.startVoicePlayback(
+                                  message.content, message.id);
+                            }
+                          },
                           child: Icon(
-                            provider.isVoicePlaying
+                            provider.isVoicePlaying &&
+                                    provider.voicePlayingMessageId == message.id
                                 ? Icons.volume_up_rounded
                                 : Icons.volume_up_outlined,
                             size: 16,

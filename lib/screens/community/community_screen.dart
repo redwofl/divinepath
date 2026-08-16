@@ -418,8 +418,14 @@ class _CommunityScreenState extends State<CommunityScreen>
               const SizedBox(height: 16),
               TextField(
                 maxLines: 4,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 15,
+                ),
+                cursorColor: AppColors.primary,
                 decoration: InputDecoration(
                   hintText: 'Share your spiritual experience...',
+                  hintStyle: const TextStyle(color: AppColors.textLight),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(

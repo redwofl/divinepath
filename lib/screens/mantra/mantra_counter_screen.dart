@@ -34,9 +34,19 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
   int _sparkleFrameCounter = 0;
   final Random _random = Random();
 
+  // Floating names rise up from the mala circle and keep floating toward the
+  // top of the screen. The cap is only a safety net so a bubble can never fly
+  // off-screen — it hovers at the top and fades out. The bubbles render on a
+  // back layer, so the chant count and session timer stay readable above them.
+  static const double _maxNameRiseY = -430;
+
   // Addictive factor: combo tracking
   int _tapCombo = 0;
   DateTime _lastTapTime = DateTime.now();
+
+  /// True while a reward ad is loading/playing for the +1 Mala bonus, so a
+  /// single click opens exactly one ad (no double-tap double ads).
+  bool _isWatchingAd = false;
 
   /// Track count of each divine name that floated up this session
   final Map<String, int> _nameCounts = {};
@@ -149,8 +159,9 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
     final xOffset = _random.nextDouble() * 60 - 30;
     // Random horizontal velocity: some go left (-), some right (+)
     final vx = (_random.nextDouble() * 2.0 - 1.0) * 1.5;
-    // Random vertical speed: some fast, some slow — travel far upward
-    final vy = -3.5 - _random.nextDouble() * 2.5; // -3.5 to -6.0
+    // Random vertical speed: brisk rise so the names visibly float up from
+    // the mala circle and travel toward the top of the screen
+    final vy = -4.0 - _random.nextDouble() * 1.0; // -4.0 to -5.0
     // Random rotation speed: spin in either direction (radians per frame)
     final rotationSpeed = (_random.nextDouble() * 2.0 - 1.0) * 0.06;
     // Random font size for variety
@@ -212,6 +223,12 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
     for (final n in _floatingNames) {
       n.x += n.vx;              // Drift sideways (left or right)
       n.yOffset += n.vy;        // Float upward at varied speed
+      // Safety cap: never rise high enough to cover the session timer
+      // above the mala — hover in place and fade out instead.
+      if (n.yOffset < _maxNameRiseY) {
+        n.yOffset = _maxNameRiseY;
+        n.vy = 0;
+      }
       n.rotation += n.rotationSpeed;  // Spin!
       n.lifetime += 0.01;       // ~100 frames = ~3 seconds
       n.opacity = (1.0 - n.lifetime).clamp(0.0, 1.0);
@@ -344,10 +361,16 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
     _pulseController.forward().then((_) => _pulseController.reverse());
   }
 
-  /// Show a rewarded ad and grant +1 mala of bonus chants on completion
+  /// Show a rewarded ad and grant +1 mala of bonus chants on completion.
+  ///
+  /// A single tap reliably opens exactly ONE ad: if the ad isn't loaded yet it
+  /// is queued and presented automatically the moment it's ready (instead of
+  /// asking the user to tap again), and [_isWatchingAd] blocks any double-tap
+  /// from opening a second ad.
   Future<void> _watchAdForBonus(MantraProvider provider) async {
     final messenger = ScaffoldMessenger.of(context);
 
+    if (_isWatchingAd) return; // one ad at a time
     if (!AdService.instance.isEnabled) {
       messenger.showSnackBar(
         const SnackBar(
@@ -360,22 +383,43 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
       return;
     }
 
+    setState(() => _isWatchingAd = true);
+
+    // If the ad isn't ready yet, queue it and wait for it to load, then show
+    // it automatically (up to ~20s so we never wait forever).
     if (!AdService.instance.isRewardedReady) {
-      // Queue one up and ask the user to tap again once it's loaded
       AdService.instance.loadRewarded();
       messenger.showSnackBar(
         const SnackBar(
           content: Text(
-            'Preparing your reward ad — please tap again in a moment 🙏',
+            'Preparing your reward ad… 🙏',
             textAlign: TextAlign.center,
           ),
         ),
       );
-      return;
+      final deadline = DateTime.now().add(const Duration(seconds: 20));
+      while (!AdService.instance.isRewardedReady) {
+        if (DateTime.now().isAfter(deadline)) break;
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (!mounted) return;
+      }
+      if (!AdService.instance.isRewardedReady) {
+        if (mounted) setState(() => _isWatchingAd = false);
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Ad is not available right now. Please try again.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+        return;
+      }
     }
 
     final earned = await AdService.instance.showRewarded();
     if (!mounted) return;
+    setState(() => _isWatchingAd = false);
 
     if (earned) {
       final malasGained = await provider.addBonusChants(AppConstants.malaCount);
@@ -462,6 +506,97 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
     return Scaffold(
       body: Stack(
         children: [
+          // Floating divine names — drawn BEHIND the main content so the
+          // chant count and session timer are always readable above them.
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  // Floating divine names inside circular bubbles that rise straight, drift, and wobble
+                  ..._floatingNames.map((name) => Transform.translate(
+                    offset: Offset(
+                      name.x + sin(name.wobblePhase) * name.wobbleAmplitude,
+                      name.yOffset +
+                          cos(name.wobblePhase * 0.7) * name.bounceAmplitude,
+                    ),
+                    child: Opacity(
+                      opacity: name.opacity,
+                      child: Transform.scale(
+                        scale: name.scale,
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFFFF4444).withOpacity(0.25),
+                            border: Border.all(
+                              color: const Color(0xFFFF4444).withOpacity(0.6),
+                              width: 2.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF4444).withOpacity(0.4),
+                                blurRadius: 20,
+                                spreadRadius: 3,
+                              ),
+                              BoxShadow(
+                                color: Colors.orange.withOpacity(0.2),
+                                blurRadius: 12,
+                                spreadRadius: 2,
+                                offset: const Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          child: Align(
+                            alignment: const Alignment(0, 0.12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Text(
+                                name.name,
+                                textAlign: TextAlign.center,
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  // Longer names shrink so the FULL mantra always fits
+                                  fontSize: name.name.length <= 6
+                                      ? 22
+                                      : name.name.length <= 12
+                                          ? 18
+                                          : 15,
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.1,
+                                  color: Colors.white.withOpacity(name.opacity),
+                                  shadows: [
+                                    // Dark outline so the name is clearly readable on the red bubble
+                                    Shadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                    Shadow(
+                                      color: const Color(0xFFDC2626).withOpacity(0.7),
+                                      blurRadius: 12,
+                                    ),
+                                    Shadow(
+                                      color: Colors.orange.withOpacity(0.3),
+                                      blurRadius: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )),
+                ],
+              ),
+            ),
+          ),
+
           // Main content
           SafeArea(
             child: Column(
@@ -956,9 +1091,24 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: () => _watchAdForBonus(provider),
-                          icon: const Icon(Icons.card_giftcard_rounded, size: 18),
-                          label: const Text('🎁 Watch Ad • +1 Mala Bonus'),
+                          onPressed: _isWatchingAd
+                              ? null
+                              : () => _watchAdForBonus(provider),
+                          icon: _isWatchingAd
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.primary,
+                                  ),
+                                )
+                              : const Icon(Icons.card_giftcard_rounded, size: 18),
+                          label: Text(
+                            _isWatchingAd
+                                ? 'Preparing ad…'
+                                : '🎁 Watch Ad • +1 Mala Bonus',
+                          ),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppColors.primary,
                             side: BorderSide(
@@ -1004,7 +1154,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
             ),
           ),
 
-          // Floating names + sparkles OVERLAY (full screen - never clipped!)
+          // Sparkles + celebrations OVERLAY (front, above the main content)
           Positioned.fill(
             child: IgnorePointer(
               child: Stack(
@@ -1173,83 +1323,6 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                     ),
                   )),
 
-                  // Floating divine names inside circular bubbles that rise straight, drift, and wobble
-                  ..._floatingNames.map((name) => Transform.translate(
-                    offset: Offset(
-                      name.x + sin(name.wobblePhase) * name.wobbleAmplitude,
-                      name.yOffset +
-                          cos(name.wobblePhase * 0.7) * name.bounceAmplitude,
-                    ),
-                    child: Opacity(
-                      opacity: name.opacity,
-                      child: Transform.scale(
-                        scale: name.scale,
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFFFF4444).withOpacity(0.25),
-                            border: Border.all(
-                              color: const Color(0xFFFF4444).withOpacity(0.6),
-                              width: 2.5,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFFFF4444).withOpacity(0.4),
-                                blurRadius: 20,
-                                spreadRadius: 3,
-                              ),
-                              BoxShadow(
-                                color: Colors.orange.withOpacity(0.2),
-                                blurRadius: 12,
-                                spreadRadius: 2,
-                                offset: const Offset(0, 0),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Text(
-                                name.name,
-                                textAlign: TextAlign.center,
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  // Longer names shrink so the FULL mantra always fits
-                                  fontSize: name.name.length <= 6
-                                      ? 22
-                                      : name.name.length <= 12
-                                          ? 18
-                                          : 15,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.1,
-                                  color: Colors.white.withOpacity(name.opacity),
-                                  shadows: [
-                                    // Dark outline so the name is clearly readable on the red bubble
-                                    Shadow(
-                                      color: Colors.black.withOpacity(0.5),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 1),
-                                    ),
-                                    Shadow(
-                                      color: const Color(0xFFDC2626).withOpacity(0.7),
-                                      blurRadius: 12,
-                                    ),
-                                    Shadow(
-                                      color: Colors.orange.withOpacity(0.3),
-                                      blurRadius: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )),
                 ],
               ),
             ),
@@ -1352,6 +1425,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
   }
 
   void _showMantraSelector(MantraProvider provider) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1362,7 +1436,12 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
         // Local snapshot so UI re-renders when favorites change
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
-            return Padding(
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColors.darkSurface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1370,13 +1449,13 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                 children: [
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Select Mantra',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -1437,7 +1516,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? AppColors.primary.withOpacity(0.1)
-                                    : AppColors.secondary,
+                                    : (isDark ? AppColors.darkCard : AppColors.secondary),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(
@@ -1456,11 +1535,16 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                                     : FontWeight.normal,
                                 color: isSelected
                                     ? AppColors.primary
-                                    : AppColors.textPrimary,
+                                    : (isDark ? AppColors.textOnDark : AppColors.textPrimary),
                               ),
                             ),
                             subtitle: mantra.translation != null
-                                ? Text(mantra.translation!)
+                                ? Text(
+                                    mantra.translation!,
+                                    style: TextStyle(
+                                      color: isDark ? AppColors.textLight : AppColors.textSecondary,
+                                    ),
+                                  )
                                 : null,
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -1506,6 +1590,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                   ),
                   const SizedBox(height: 16),
                 ],
+              ),
               ),
             );
           },
@@ -1577,7 +1662,7 @@ class _FloatingName {
   final Color color;
   double x;
   final double vx;
-  final double vy;
+  double vy; // mutable so the rise cap can stop a name mid-flight
   double yOffset;
   double rotation = 0;
   final double rotationSpeed;
@@ -1720,9 +1805,14 @@ class MalaPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
+      // Show the completed-malas indicator on the RIGHT side of the circle
+      // so it never sits below the ring where it overlaps the name pills.
       textPainter.paint(
         canvas,
-        Offset(center.dx - textPainter.width / 2, center.dy + radius + 20),
+        Offset(
+          center.dx + radius + 12,
+          center.dy - textPainter.height / 2,
+        ),
       );
     }
   }

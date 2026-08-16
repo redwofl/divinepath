@@ -17,6 +17,8 @@ import '../screens/chat/chat_screen.dart';
 import '../screens/game/bubble_game_screen.dart';
 import '../screens/meditation/meditation_screen.dart';
 import '../screens/meditation/meditation_timer_screen.dart';
+import '../screens/aarti/aarti_list_screen.dart';
+import '../screens/aarti/aarti_detail_screen.dart';
 import '../screens/challenges/challenges_screen.dart';
 import '../screens/analytics/analytics_screen.dart';
 import '../screens/community/community_screen.dart';
@@ -133,6 +135,18 @@ class AppRouter {
                   builder: (context, state) => const ChatScreen(),
                 ),
               ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/aarti',
+          builder: (context, state) => const AartiListScreen(),
+          routes: [
+            GoRoute(
+              path: ':aartiId',
+              builder: (context, state) => AartiDetailScreen(
+                aartiId: state.pathParameters['aartiId'] ?? 'ganesh',
+              ),
             ),
           ],
         ),

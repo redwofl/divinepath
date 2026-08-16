@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/gemini_service.dart';
 import '../services/firebase_service.dart';
+import '../services/audio_service.dart';
 import '../models/chat_model.dart';
 
 class ChatProvider extends ChangeNotifier {
@@ -16,6 +17,7 @@ class ChatProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isListening = false;
   bool _isVoicePlaying = false;
+  String? _voicePlayingMessageId;
   String? _error;
 
   // Getters
@@ -25,6 +27,7 @@ class ChatProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isListening => _isListening;
   bool get isVoicePlaying => _isVoicePlaying;
+  String? get voicePlayingMessageId => _voicePlayingMessageId;
   String? get error => _error;
 
   /// Initialize chat provider
@@ -32,8 +35,20 @@ class ChatProvider extends ChangeNotifier {
     // Initialize Gemini (API key should come from user config)
     // await _geminiService.initialize('YOUR_GEMINI_API_KEY');
 
+    // Keep the speaker icon in sync with real TTS playback state
+    AudioService.instance.ttsPlaying.addListener(_onTtsStateChanged);
+
     await _loadConversations();
     startNewConversation();
+  }
+
+  void _onTtsStateChanged() {
+    final playing = AudioService.instance.ttsPlaying.value;
+    if (_isVoicePlaying != playing) {
+      _isVoicePlaying = playing;
+      if (!playing) _voicePlayingMessageId = null;
+      notifyListeners();
+    }
   }
 
   /// Initialize Gemini AI with API key
@@ -107,16 +122,21 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Play AI response as voice
-  void startVoicePlayback(String text) {
+  /// Play AI response as voice using the app's TTS service
+  Future<void> startVoicePlayback(String text, String messageId) async {
+    // Stop any ongoing playback before starting a new one
+    await AudioService.instance.stopSpeaking();
+    _voicePlayingMessageId = messageId;
     _isVoicePlaying = true;
     notifyListeners();
-    // Text-to-speech would be implemented with flutter_tts package
+    await AudioService.instance.speak(text);
   }
 
   /// Stop voice playback
-  void stopVoicePlayback() {
+  Future<void> stopVoicePlayback() async {
+    await AudioService.instance.stopSpeaking();
     _isVoicePlaying = false;
+    _voicePlayingMessageId = null;
     notifyListeners();
   }
 

@@ -180,37 +180,40 @@ class _MeditationScreenState extends State<MeditationScreen> {
               const SizedBox(height: 16),
               ...AppConstants.ambientSounds.map((sound) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: AppColors.textLight.withOpacity(0.1),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(sound['icon']!, style: const TextStyle(fontSize: 24)),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              sound['name']!,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
+                // Whole row is tappable: tapping anywhere on the tile toggles
+                // the sound, not just the small play button.
+                child: GestureDetector(
+                  onTap: () => _toggleSound(sound),
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.textLight.withOpacity(0.1),
                       ),
-                      GestureDetector(
-                        onTap: () => _toggleSound(sound),
-                        child: Container(
+                    ),
+                    child: Row(
+                      children: [
+                        Text(sound['icon']!, style: const TextStyle(fontSize: 24)),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                sound['name']!,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withOpacity(0.1),
@@ -224,8 +227,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
                             size: 20,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               )),

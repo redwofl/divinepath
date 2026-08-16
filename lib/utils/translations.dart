@@ -6,7 +6,7 @@ class Translations {
   static const Map<String, Map<String, String>> _strings = {
     'en': {
       // App
-      'appName': 'DivinePath AI',
+      'appName': 'DivinePath',
       'appTagline': 'Your Spiritual Companion',
 
       // Navigation
@@ -66,6 +66,40 @@ class Translations {
       'new_high_score': 'New High Score!',
       'play_again': 'Play Again',
       'back_to_menu': 'Back to Menu',
+      'watch_ad_extra_life': 'Watch Ad • Extra Life',
+      'extra_life_granted': '🙏 Extra life granted! Keep going!',
+      'ad_not_available': 'Ad is not available right now. Please try again.',
+
+      // Stories Screen
+      'sacred_stories': 'Sacred Stories',
+      'sacred_stories_subtitle': 'Explore timeless wisdom from ancient scriptures',
+      'all_stories': 'All Stories',
+      'stories_count': '{count} stories',
+      'stories_stat': 'Stories',
+      'saved_stat': 'Saved',
+      'search_stories_hint': 'Search stories...',
+      'featured_stories': 'Featured Stories',
+      'swipe_hint': 'Swipe',
+      'reads': 'reads',
+      'quick_badge': 'Quick',
+      'show_less': 'Show less',
+      'read_full_story': 'Read full story',
+      'no_stories_category': 'No stories in this category',
+      'no_stories_available': 'No stories available',
+      'try_different_category': 'Try a different category',
+      'stories_will_appear': 'Stories will appear here once loaded',
+      'show_all_stories': 'Show All Stories',
+      'min_read': '{count} min read',
+      'story_coming_soon': 'Story content coming soon',
+      'story_coming_soon_desc': 'The full story text for this tale will be added shortly.',
+
+      // Aarti Screen
+      'aartis': 'Aartis',
+      'aarti_subtitle': 'Read devotional aartis in Devanagari — Ganesh, Durga, Lakshmi & more',
+      'aarti_home_subtitle': 'Ganesh, Durga, Lakshmi & more',
+      'aarti_stories_chip': 'Aartis',
+      'listen': 'Listen',
+      'stop_listening': 'Stop',
 
       // Profile Screen
       'profile': 'Profile',
@@ -111,7 +145,7 @@ class Translations {
       'tap_sound_pop': 'Pop',
       'tap_sound_om': 'OM Chant',
       'tap_sound_silent': 'Silent',
-      'app_version': 'DivinePath AI v1.0.0',
+      'app_version': 'DivinePath v1.0.0',
       'streak': 'Streak',
       'total_chants_short': 'Total Chants',
       'meditation': 'Meditation',
@@ -157,7 +191,7 @@ class Translations {
 
     'hi': {
       // App
-      'appName': 'दिव्यपथ AI',
+      'appName': 'दिव्यपथ',
       'appTagline': 'आपका आध्यात्मिक साथी',
 
       // Navigation
@@ -217,6 +251,40 @@ class Translations {
       'new_high_score': 'नया उच्च स्कोर!',
       'play_again': 'फिर से खेलें',
       'back_to_menu': 'मेनू पर वापस जाएँ',
+      'watch_ad_extra_life': 'Ad देखें • अतिरिक्त जीवन',
+      'extra_life_granted': '🙏 अतिरिक्त जीवन मिला! चलते रहें!',
+      'ad_not_available': 'Ad अभी उपलब्ध नहीं है। कृपया पुनः प्रयास करें।',
+
+      // Stories Screen
+      'sacred_stories': 'पवित्र कहानियाँ',
+      'sacred_stories_subtitle': 'प्राचीन शास्त्रों से कालजयी ज्ञान की खोज करें',
+      'all_stories': 'सभी कहानियाँ',
+      'stories_count': '{count} कहानियाँ',
+      'stories_stat': 'कहानियाँ',
+      'saved_stat': 'सहेजी गई',
+      'search_stories_hint': 'कहानियाँ खोजें...',
+      'featured_stories': 'विशेष कहानियाँ',
+      'swipe_hint': 'स्वाइप करें',
+      'reads': 'पढ़ा गया',
+      'quick_badge': 'त्वरित',
+      'show_less': 'कम दिखाएँ',
+      'read_full_story': 'पूरी कहानी पढ़ें',
+      'no_stories_category': 'इस श्रेणी में कोई कहानी नहीं',
+      'no_stories_available': 'कोई कहानी उपलब्ध नहीं',
+      'try_different_category': 'कोई अन्य श्रेणी आज़माएँ',
+      'stories_will_appear': 'कहानियाँ लोड होने पर यहाँ दिखाई देंगी',
+      'show_all_stories': 'सभी कहानियाँ दिखाएँ',
+      'min_read': '{count} मिनट पढ़ें',
+      'story_coming_soon': 'कहानी जल्द आ रही है',
+      'story_coming_soon_desc': 'इस कहानी का पूरा टेक्स्ट जल्द ही जोड़ा जाएगा।',
+
+      // Aarti Screen
+      'aartis': 'आरतियाँ',
+      'aarti_subtitle': 'देवनागरी में भक्ति आरतियाँ पढ़ें — गणेश, दुर्गा, लक्ष्मी और अधिक',
+      'aarti_home_subtitle': 'गणेश, दुर्गा, लक्ष्मी और अधिक',
+      'aarti_stories_chip': 'आरतियाँ',
+      'listen': 'सुनें',
+      'stop_listening': 'रोकें',
 
       // Profile Screen
       'profile': 'प्रोफ़ाइल',
@@ -262,7 +330,7 @@ class Translations {
       'tap_sound_pop': 'पॉप',
       'tap_sound_om': 'ॐ जाप',
       'tap_sound_silent': 'मौन',
-      'app_version': 'दिव्यपथ AI v1.0.0',
+      'app_version': 'दिव्यपथ v1.0.0',
       'streak': 'लगातारता',
       'total_chants_short': 'कुल जाप',
       'meditation': 'ध्यान',
@@ -308,7 +376,7 @@ class Translations {
 
     'sa': {
       // App
-      'appName': 'दिव्यपथः AI',
+      'appName': 'दिव्यपथः',
       'appTagline': 'भवतः आध्यात्मिकः सङ्गी',
 
       // Navigation
@@ -368,6 +436,40 @@ class Translations {
       'new_high_score': 'नूतनः उच्चः स्कोर्!',
       'play_again': 'पुनः क्रीडतु',
       'back_to_menu': 'सूचीपटं प्रति गच्छतु',
+      'watch_ad_extra_life': 'प्रचारं पश्यतु • अतिरिक्तं जीवनम्',
+      'extra_life_granted': '🙏 अतिरिक्तं जीवनं प्राप्तम्! गच्छतु!',
+      'ad_not_available': 'प्रचारः अधुना उपलब्धः नास्ति। पुनः प्रयतताम्।',
+
+      // Stories Screen
+      'sacred_stories': 'पवित्राः कथाः',
+      'sacred_stories_subtitle': 'प्राचीनेषु शास्त्रेषु कालजयीं ज्ञानं अन्वेष्टुम्',
+      'all_stories': 'सर्वाः कथाः',
+      'stories_count': '{count} कथाः',
+      'stories_stat': 'कथाः',
+      'saved_stat': 'रक्षितम्',
+      'search_stories_hint': 'कथाः अन्वेष्टुम्...',
+      'featured_stories': 'विशिष्टाः कथाः',
+      'swipe_hint': 'स्वाइप',
+      'reads': 'पठितम्',
+      'quick_badge': 'शीघ्रम्',
+      'show_less': 'न्यूनं दर्शयतु',
+      'read_full_story': 'सम्पूर्णं कथां पठतु',
+      'no_stories_category': 'अस्मिन् वर्गे कथाः न सन्ति',
+      'no_stories_available': 'कथाः उपलब्धाः न सन्ति',
+      'try_different_category': 'अन्यं वर्गं प्रयतताम्',
+      'stories_will_appear': 'कथाः लोड् हुत्वा अत्र दृश्यन्ते',
+      'show_all_stories': 'सर्वाः कथाः दर्शयतु',
+      'min_read': '{count} नाडिकाः पठतु',
+      'story_coming_soon': 'कथा शीघ्रं आगच्छति',
+      'story_coming_soon_desc': 'अस्याः कथायाः सम्पूर्णः पाठः शीघ्रं योज्यते।',
+
+      // Aarti Screen
+      'aartis': 'आरतयः',
+      'aarti_subtitle': 'देवनागर्यां भक्ति-आरतयः पठ्यन्ताम् — गणेशः, दुर्गा, लक्ष्मी च',
+      'aarti_home_subtitle': 'गणेशः, दुर्गा, लक्ष्मी च',
+      'aarti_stories_chip': 'आरतयः',
+      'listen': 'शृणु',
+      'stop_listening': 'विरम',
 
       // Profile Screen
       'profile': 'प्रोफ़ाइल',
@@ -413,7 +515,7 @@ class Translations {
       'tap_sound_pop': 'पॉप्',
       'tap_sound_om': 'ॐ जपः',
       'tap_sound_silent': 'मौनम्',
-      'app_version': 'दिव्यपथः AI v1.0.0',
+      'app_version': 'दिव्यपथः v1.0.0',
       'streak': 'सातत्यम्',
       'total_chants_short': 'कुलजपाः',
       'meditation': 'ध्यानम्',
@@ -430,7 +532,7 @@ class Translations {
 
     'mr': {
       // App
-      'appName': 'दिव्यपथ AI',
+      'appName': 'दिव्यपथ',
       'appTagline': 'तुमचा आध्यात्मिक साथी',
 
       // Navigation
@@ -490,6 +592,40 @@ class Translations {
       'new_high_score': 'नवीन उच्च स्कोअर!',
       'play_again': 'पुन्हा खेळा',
       'back_to_menu': 'मेनूवर परत जा',
+      'watch_ad_extra_life': 'जाहिरात पहा • अतिरिक्त जीवन',
+      'extra_life_granted': '🙏 अतिरिक्त जीवन मिळाले! सुरू ठेवा!',
+      'ad_not_available': 'जाहिरात आत्ता उपलब्ध नाही। कृपया पुन्हा प्रयत्न करा.',
+
+      // Stories Screen
+      'sacred_stories': 'पवित्र कथा',
+      'sacred_stories_subtitle': 'प्राचीन ग्रंथांमधील कालजयी ज्ञान शोधा',
+      'all_stories': 'सर्व कथा',
+      'stories_count': '{count} कथा',
+      'stories_stat': 'कथा',
+      'saved_stat': 'जतन केलेल्या',
+      'search_stories_hint': 'कथा शोधा...',
+      'featured_stories': 'विशेष कथा',
+      'swipe_hint': 'स्वाइप',
+      'reads': 'वाचलेल्या',
+      'quick_badge': 'जलद',
+      'show_less': 'कमी दाखवा',
+      'read_full_story': 'संपूर्ण कथा वाचा',
+      'no_stories_category': 'या श्रेणीत कथा नाहीत',
+      'no_stories_available': 'कथा उपलब्ध नाहीत',
+      'try_different_category': 'वेगळी श्रेणी वापरून पहा',
+      'stories_will_appear': 'कथा लोड झाल्यावर येथे दिसतील',
+      'show_all_stories': 'सर्व कथा दाखवा',
+      'min_read': '{count} मिनिटे वाचा',
+      'story_coming_soon': 'कथा लवकर येत आहे',
+      'story_coming_soon_desc': 'या कथेचा संपूर्ण मजकूर लवकरच जोडला जाईल.',
+
+      // Aarti Screen
+      'aartis': 'आरत्या',
+      'aarti_subtitle': 'देवनागरीत भक्ती आरत्या वाचा — गणेश, दुर्गा, लक्ष्मी आणि अधिक',
+      'aarti_home_subtitle': 'गणेश, दुर्गा, लक्ष्मी आणि अधिक',
+      'aarti_stories_chip': 'आरत्या',
+      'listen': 'ऐका',
+      'stop_listening': 'थांबा',
 
       // Profile Screen
       'profile': 'प्रोफाइल',
@@ -535,7 +671,7 @@ class Translations {
       'tap_sound_pop': 'पॉप',
       'tap_sound_om': 'ॐ जप',
       'tap_sound_silent': 'मौन',
-      'app_version': 'दिव्यपथ AI v1.0.0',
+      'app_version': 'दिव्यपथ v1.0.0',
       'streak': 'सातत्यता',
       'total_chants_short': 'एकूण जप',
       'meditation': 'ध्यान',
@@ -552,7 +688,7 @@ class Translations {
 
     'gu': {
       // App
-      'appName': 'દિવ્યપથ AI',
+      'appName': 'દિવ્યપથ',
       'appTagline': 'તમારો આધ્યાત્મિક સાથી',
 
       // Navigation
@@ -612,6 +748,40 @@ class Translations {
       'new_high_score': 'નવો ઉચ્ચ સ્કોર!',
       'play_again': 'ફરી રમો',
       'back_to_menu': 'મેનુ પર પાછા જાઓ',
+      'watch_ad_extra_life': 'જાહેરાત જુઓ • વધારાનું જીવન',
+      'extra_life_granted': '🙏 વધારાનું જીવન મળ્યું! ચાલુ રાખો!',
+      'ad_not_available': 'જાહેરાત હાલ ઉપલબ્ધ નથી. કૃપા કરીને ફરી પ્રયાસ કરો.',
+
+      // Stories Screen
+      'sacred_stories': 'પવિત્ર વાર્તાઓ',
+      'sacred_stories_subtitle': 'પ્રાચીન ગ્રંથોમાંથી કાલજયી જ્ઞાન શોધો',
+      'all_stories': 'બધી વાર્તાઓ',
+      'stories_count': '{count} વાર્તાઓ',
+      'stories_stat': 'વાર્તાઓ',
+      'saved_stat': 'સાચવેલી',
+      'search_stories_hint': 'વાર્તાઓ શોધો...',
+      'featured_stories': 'વિશેષ વાર્તાઓ',
+      'swipe_hint': 'સ્વાઇપ',
+      'reads': 'વાંચેલી',
+      'quick_badge': 'ઝડપી',
+      'show_less': 'ઓછું બતાવો',
+      'read_full_story': 'સંપૂર્ણ વાર્તા વાંચો',
+      'no_stories_category': 'આ શ્રેણીમાં કોઈ વાર્તા નથી',
+      'no_stories_available': 'કોઈ વાર્તા ઉપલબ્ધ નથી',
+      'try_different_category': 'અલગ શ્રેણી અજમાવો',
+      'stories_will_appear': 'વાર્તાઓ લોડ થયા પછી અહીં દેખાશે',
+      'show_all_stories': 'બધી વાર્તાઓ બતાવો',
+      'min_read': '{count} મિનિટ વાંચો',
+      'story_coming_soon': 'વાર્તા ટૂંકમાં આવી રહી છે',
+      'story_coming_soon_desc': 'આ વાર્તાનો સંપૂર્ણ ટેક્સ્ટ ટૂંક સમયમાં ઉમેરવામાં આવશે.',
+
+      // Aarti Screen
+      'aartis': 'આરતીઓ',
+      'aarti_subtitle': 'દેવનાગરીમાં ભક્તિ આરતીઓ વાંચો — ગણેશ, દુર્ગા, લક્ષ્મી અને વધુ',
+      'aarti_home_subtitle': 'ગણેશ, દુર્ગા, લક્ષ્મી અને વધુ',
+      'aarti_stories_chip': 'આરતીઓ',
+      'listen': 'સાંભળો',
+      'stop_listening': 'બંધ કરો',
 
       // Profile Screen
       'profile': 'પ્રોફાઇલ',
@@ -657,7 +827,7 @@ class Translations {
       'tap_sound_pop': 'પૉપ',
       'tap_sound_om': 'ૐ જપ',
       'tap_sound_silent': 'મૌન',
-      'app_version': 'દિવ્યપથ AI v1.0.0',
+      'app_version': 'દિવ્યપથ v1.0.0',
       'streak': 'સાતત્યતા',
       'total_chants_short': 'કુલ જપ',
       'meditation': 'ધ્યાન',

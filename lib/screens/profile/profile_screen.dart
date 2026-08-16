@@ -7,6 +7,7 @@ import '../../providers/mantra_provider.dart';
 import '../../providers/tap_sound_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../theme/app_theme.dart';
+import '../../services/notification_service.dart';
 import '../../utils/helpers.dart';
 import '../../utils/translations.dart';
 import '../../widgets/common/language_switcher_button.dart';
@@ -129,14 +130,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      user?.email ?? 'guest@divinepath.app',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withOpacity(0.7),
-                      ),
-                    ),
                     const SizedBox(height: 12),
 
                     // Level
@@ -199,7 +192,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icons.auto_awesome_rounded,
                 Translations.get('my_mantras', locale: locCode),
                 Translations.get('view_favorite_mantras', locale: locCode),
-                () {},
+                // '/mantra' is a bottom-nav tab route, so switch to the tab
+                // with go() instead of pushing it as a page.
+                () => context.go('/mantra'),
               ),
               _buildMenuItem(
                 Icons.bookmark_rounded,
@@ -231,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icons.notifications_rounded,
                 Translations.get('notifications', locale: locCode),
                 Translations.get('manage_reminders', locale: locCode),
-                () {},
+                () => _showSettings(context, themeProvider, locCode),
               ),
               _buildMenuItem(
                 Icons.language_rounded,
@@ -242,14 +237,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? Translations.get('hindi', locale: locCode)
                         : Translations.get('english', locale: locCode),
                 () => _showLanguagePicker(context, localeProvider),
-              ),
-              _buildMenuItem(
-                Icons.star_rounded,
-                Translations.get('premium', locale: locCode),
-                user?.isPremium ?? false
-                    ? Translations.get('active', locale: locCode)
-                    : Translations.get('upgrade', locale: locCode),
-                () => context.push('/premium'),
               ),
 
               const SizedBox(height: 24),
@@ -400,12 +387,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) {
+        // Use the sheet's own context (ctx) so the sheet rises above the
+        // keyboard and the name field is never hidden while typing.
         return Padding(
           padding: EdgeInsets.only(
             left: 24,
             right: 24,
             top: 24,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -422,10 +411,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
               TextField(
                 controller: nameController,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 15,
+                ),
+                cursorColor: AppColors.primary,
                 decoration: InputDecoration(
                   labelText: Translations.get('name', locale: locCode),
+                  labelStyle: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                  ),
                   hintText: Translations.get('enter_name', locale: locCode),
-                  prefixIcon: const Icon(Icons.person_outline_rounded),
+                  hintStyle: const TextStyle(
+                    color: AppColors.textLight,
+                    fontSize: 14,
+                  ),
+                  prefixIcon: const Icon(Icons.person_outline_rounded,
+                      color: AppColors.textSecondary),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -537,150 +540,218 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showSettings(BuildContext context, ThemeProvider themeProvider, String locCode) {
-    // Use a StatefulBuilder so the picker's selection updates live
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (ctx) {
-        final tapProvider = context.read<TapSoundProvider>();
-        return StatefulBuilder(
-          builder: (ctx, setSheetState) {
-            return Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    Translations.get('settings', locale: locCode),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SwitchListTile(
-                    title: Text(Translations.get('dark_mode', locale: locCode)),
-                    subtitle: Text(Translations.get('toggle_dark_theme', locale: locCode)),
-                    value: themeProvider.isDarkMode,
-                    onChanged: (_) {
-                      themeProvider.toggleDarkMode();
-                      Navigator.pop(ctx);
-                    },
-                    activeColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  SwitchListTile(
-                    title: Text(Translations.get('notifications', locale: locCode)),
-                    subtitle: Text(Translations.get('daily_reminders', locale: locCode)),
-                    value: true,
-                    onChanged: (value) {},
-                    activeColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  SwitchListTile(
-                    title: Text(Translations.get('haptic_feedback', locale: locCode)),
-                    subtitle: Text(Translations.get('vibration_on_chant', locale: locCode)),
-                    value: true,
-                    onChanged: (value) {},
-                    activeColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+      builder: (ctx) => _SettingsSheet(
+        themeProvider: themeProvider,
+        locCode: locCode,
+      ),
+    );
+  }
+}
 
-                  // Tap Sound Picker
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16, bottom: 8),
-                    child: Text(
-                      Translations.get('tap_sound', locale: locCode),
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      children: TapSoundProvider.options.map((opt) {
-                        final isSelected = tapProvider.selectedSoundId == opt.id;
-                        return Expanded(
-                          child: GestureDetector(
-                            onTap: () async {
-                              await tapProvider.setTapSound(opt.id);
-                              setSheetState(() {});
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
+/// Settings sheet with working notification & haptic toggles.
+class _SettingsSheet extends StatefulWidget {
+  final ThemeProvider themeProvider;
+  final String locCode;
+
+  const _SettingsSheet({required this.themeProvider, required this.locCode});
+
+  @override
+  State<_SettingsSheet> createState() => _SettingsSheetState();
+}
+
+class _SettingsSheetState extends State<_SettingsSheet> {
+  bool _notificationsEnabled = true;
+  bool _hapticsEnabled = true;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final notifEnabled = await NotificationService.instance.isNotificationsEnabled();
+    if (mounted) {
+      setState(() {
+        _notificationsEnabled = notifEnabled;
+        _hapticsEnabled = Helpers.hapticsEnabled;
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _onNotificationsChanged(bool value) async {
+    if (value) {
+      // Ask for permission first (Android 13+ requires it)
+      await NotificationService.instance.requestPermissions();
+    }
+    await NotificationService.instance.setNotificationsEnabled(value);
+    if (mounted) {
+      setState(() => _notificationsEnabled = value);
+    }
+  }
+
+  Future<void> _onHapticsChanged(bool value) async {
+    await Helpers.setHapticsEnabled(value);
+    if (mounted) {
+      setState(() => _hapticsEnabled = value);
+    }
+    // Preview the effect immediately so the user feels the change
+    if (value) Helpers.lightHaptic();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final locCode = widget.locCode;
+    final themeProvider = widget.themeProvider;
+    final tapProvider = context.read<TapSoundProvider>();
+
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            Translations.get('settings', locale: locCode),
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 20),
+          if (_loading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          else ...[
+            SwitchListTile(
+              title: Text(Translations.get('dark_mode', locale: locCode)),
+              subtitle: Text(Translations.get('toggle_dark_theme', locale: locCode)),
+              value: themeProvider.isDarkMode,
+              onChanged: (_) {
+                themeProvider.toggleDarkMode();
+                Navigator.pop(context);
+              },
+              activeColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            SwitchListTile(
+              title: Text(Translations.get('notifications', locale: locCode)),
+              subtitle: Text(Translations.get('daily_reminders', locale: locCode)),
+              value: _notificationsEnabled,
+              onChanged: _onNotificationsChanged,
+              activeColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            SwitchListTile(
+              title: Text(Translations.get('haptic_feedback', locale: locCode)),
+              subtitle: Text(Translations.get('vibration_on_chant', locale: locCode)),
+              value: _hapticsEnabled,
+              onChanged: _onHapticsChanged,
+              activeColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // Tap Sound Picker
+            Padding(
+              padding: const EdgeInsets.only(left: 16, bottom: 8),
+              child: Text(
+                Translations.get('tap_sound', locale: locCode),
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                children: TapSoundProvider.options.map((opt) {
+                  final isSelected = tapProvider.selectedSoundId == opt.id;
+                  return Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        await tapProvider.setTapSound(opt.id);
+                        if (mounted) setState(() {});
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.primary.withOpacity(0.1)
+                              : AppColors.secondary,
+                          borderRadius: BorderRadius.circular(12),
+                          border: isSelected
+                              ? Border.all(
+                                  color: AppColors.primary,
+                                  width: 2,
+                                )
+                              : Border.all(
+                                  color: Colors.transparent,
+                                ),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              opt.icon,
+                              style: const TextStyle(fontSize: 22),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              opt.label,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
                                 color: isSelected
-                                    ? AppColors.primary.withOpacity(0.1)
-                                    : AppColors.secondary,
-                                borderRadius: BorderRadius.circular(12),
-                                border: isSelected
-                                    ? Border.all(
-                                        color: AppColors.primary,
-                                        width: 2,
-                                      )
-                                    : Border.all(
-                                        color: Colors.transparent,
-                                      ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    opt.icon,
-                                    style: const TextStyle(fontSize: 22),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    opt.label,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: isSelected
-                                          ? FontWeight.w600
-                                          : FontWeight.normal,
-                                      color: isSelected
-                                          ? AppColors.primary
-                                          : AppColors.textPrimary,
-                                    ),
-                                  ),
-                                ],
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-                  Center(
-                    child: Text(
-                      '${Translations.get('appName', locale: locCode)} v1.0.0',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textLight,
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  );
+                }).toList(),
               ),
-            );
-          },
-        );
-      },
+            ),
+
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
+                '${Translations.get('appName', locale: locCode)} v1.0.0',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textLight,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

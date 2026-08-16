@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppConstants {
   // App Info
-  static const String appName = 'DivinePath AI';
+  static const String appName = 'DivinePath';
   static const String appTagline = 'Your Spiritual Companion';
   static const String appVersion = '1.0.0';
 
@@ -38,7 +38,7 @@ class AppConstants {
 
   // Levels
   static const List<Map<String, dynamic>> levels = [
-    {'name': 'Seeker', 'minXp': 0, 'icon': '🔍'},
+    {'name': 'Seeker', 'minXp': 0, 'icon': '🧭'},
     {'name': 'Devotee', 'minXp': 100, 'icon': '🙏'},
     {'name': 'Sadhak', 'minXp': 500, 'icon': '🕉️'},
     {'name': 'Yogi', 'minXp': 1000, 'icon': '🧘'},
