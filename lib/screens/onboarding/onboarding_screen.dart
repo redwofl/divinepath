@@ -20,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   // Onboarding data
   final _nameController = TextEditingController();
-  List<String> _selectedInterests = [];
+  final List<String> _selectedInterests = [];
   String? _selectedDeity;
   String? _selectedMantra;
   String _selectedLanguage = 'en';
@@ -53,6 +53,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       dailyGoal: _dailyGoal,
     );
 
+    // Apply the selected language so the app UI switches immediately.
+    final localeProvider = context.read<LocaleProvider>();
+    await localeProvider.setLocale(_selectedLanguage);
+
     setState(() => _isLoading = false);
 
     if (mounted) {
@@ -62,7 +66,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
+    final surfaceColor = isDark ? AppColors.darkSurface : Colors.white;
+    final cardColor = isDark ? AppColors.darkCard : Colors.white;
     return Scaffold(
+      backgroundColor: surfaceColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -76,7 +86,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   if (_currentPage < 3)
                     TextButton(
                       onPressed: _completeOnboarding,
-                      child: const Text('Skip'),
+                      child: Text('Skip', style: TextStyle(color: textSecondary)),
                     )
                   else
                     const SizedBox(width: 80),
@@ -100,25 +110,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
 
-                  // Language switcher
-                  GestureDetector(
-                    onTap: () => _showOnboardingLanguagePicker(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.secondary,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        context.watch<LocaleProvider>().badge,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                  ),
+                   // Language switcher
+                   GestureDetector(
+                     onTap: () => _showOnboardingLanguagePicker(context),
+                     child: Container(
+                       padding: const EdgeInsets.all(8),
+                       decoration: BoxDecoration(
+                         color: isDark ? AppColors.darkCard : AppColors.secondary,
+                         borderRadius: BorderRadius.circular(12),
+                       ),
+                       child: Text(
+                         context.watch<LocaleProvider>().badge,
+                         style: TextStyle(
+                           fontSize: 11,
+                           fontWeight: FontWeight.bold,
+                           color: isDark ? AppColors.textOnDark : AppColors.primary,
+                         ),
+                       ),
+                     ),
+                   ),
                 ],
               ),
             ),
@@ -129,10 +139,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _pageController,
                 onPageChanged: (page) => setState(() => _currentPage = page),
                 children: [
-                  _buildNamePage(),
-                  _buildInterestsPage(),
-                  _buildDeityPage(),
-                  _buildGoalPage(),
+                  _buildNamePage(isDark, textPrimary, textSecondary, surfaceColor, cardColor),
+                  _buildInterestsPage(isDark, textPrimary, textSecondary, surfaceColor, cardColor),
+                  _buildDeityPage(isDark, textPrimary, textSecondary, surfaceColor, cardColor),
+                  _buildGoalPage(isDark, textPrimary, textSecondary, surfaceColor, cardColor),
                 ],
               ),
             ),
@@ -177,7 +187,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   // Page 1: Name
-  Widget _buildNamePage() {
+  Widget _buildNamePage(bool isDark, Color textPrimary, Color textSecondary, Color surfaceColor, Color cardColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -186,7 +196,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Container(
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.secondary,
               shape: BoxShape.circle,
             ),
@@ -194,38 +204,34 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 size: 40, color: AppColors.primary),
           ),
           const SizedBox(height: 32),
-          const Text(
+          Text(
             'What should we call you?',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: textPrimary,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Your name helps us personalize your journey',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: textSecondary,
             ),
           ),
           const SizedBox(height: 32),
           TextFormField(
             controller: _nameController,
             textCapitalization: TextCapitalization.words,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 15,
-            ),
+            style: TextStyle(color: textPrimary, fontSize: 15),
             cursorColor: AppColors.primary,
             decoration: InputDecoration(
               hintText: 'Enter your name',
-              hintStyle: const TextStyle(color: AppColors.textLight),
-              prefixIcon: const Icon(Icons.person_outline_rounded,
-                  color: AppColors.textSecondary),
+              hintStyle: TextStyle(color: textSecondary),
+              prefixIcon: Icon(Icons.person_outline_rounded, color: textSecondary),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: cardColor,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide.none,
@@ -237,8 +243,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // Page 2: Spiritual Interests
-  Widget _buildInterestsPage() {
+   Widget _buildInterestIcon(Map<String, dynamic> interest) {
+     final imagePath = interest['image'] as String?;
+     if (imagePath != null && imagePath.isNotEmpty) {
+       return Image.asset(
+         imagePath,
+         width: 24,
+         height: 24,
+         fit: BoxFit.contain,
+       );
+     }
+     return Text(interest['icon'] as String, style: const TextStyle(fontSize: 20));
+   }
+
+   // Page 2: Spiritual Interests
+   Widget _buildInterestsPage(bool isDark, Color textPrimary, Color textSecondary, Color surfaceColor, Color cardColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -248,7 +267,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Container(
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.secondary,
               shape: BoxShape.circle,
             ),
@@ -256,20 +275,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 size: 40, color: AppColors.primary),
           ),
           const SizedBox(height: 32),
-          const Text(
+          Text(
             'What interests you?',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: textPrimary,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Select all that resonate with you',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: textSecondary,
             ),
           ),
           const SizedBox(height: 24),
@@ -300,32 +319,32 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? (interest['color'] as Color).withOpacity(0.15)
-                          : Colors.white,
+                          : cardColor,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isSelected
                             ? interest['color'] as Color
-                            : AppColors.textLight.withOpacity(0.2),
+                            : (isDark ? AppColors.textLight.withOpacity(0.2) : AppColors.textLight.withOpacity(0.2)),
                         width: 2,
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(interest['icon'] as String, style: const TextStyle(fontSize: 20)),
-                        const SizedBox(width: 8),
-                        Text(
-                          interest['name'] as String,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                            color: isSelected
-                                ? interest['color'] as Color
-                                : AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
+                     child: Row(
+                       mainAxisAlignment: MainAxisAlignment.center,
+                       children: [
+                         _buildInterestIcon(interest),
+                         const SizedBox(width: 8),
+                         Text(
+                           interest['name'] as String,
+                           style: TextStyle(
+                             fontSize: 14,
+                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                             color: isSelected
+                                 ? interest['color'] as Color
+                                 : textPrimary,
+                           ),
+                         ),
+                       ],
+                     ),
                   ),
                 );
               },
@@ -337,7 +356,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   // Page 3: Favorite Deity and Mantra
-  Widget _buildDeityPage() {
+  Widget _buildDeityPage(bool isDark, Color textPrimary, Color textSecondary, Color surfaceColor, Color cardColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SingleChildScrollView(
@@ -347,7 +366,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Container(
               width: 80,
               height: 80,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.secondary,
                 shape: BoxShape.circle,
               ),
@@ -355,22 +374,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   size: 40, color: AppColors.primary),
             ),
             const SizedBox(height: 32),
-            const Text(
-              'Your Spiritual Path',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
+          Text(
+            'Your Spiritual Path',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: textPrimary,
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Choose your favorite deity or spiritual focus',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Choose your favorite deity or spiritual focus',
+            style: TextStyle(
+              fontSize: 14,
+              color: textSecondary,
             ),
+          ),
             const SizedBox(height: 24),
 
             // Deity selection
@@ -391,13 +410,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     });
                   },
                   selectedColor: AppColors.primary.withOpacity(0.1),
-                  backgroundColor: Colors.white,
+                  backgroundColor: cardColor,
                   labelStyle: TextStyle(
-                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                    color: isSelected ? AppColors.primary : textPrimary,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                   side: BorderSide(
-                    color: isSelected ? AppColors.primary : AppColors.textLight.withOpacity(0.2),
+                    color: isSelected ? AppColors.primary : (isDark ? AppColors.textLight.withOpacity(0.2) : AppColors.textLight.withOpacity(0.2)),
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -409,34 +428,41 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 24),
 
             // Language selection
-            const Text(
+            Text(
               'Preferred Language',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: textPrimary,
               ),
             ),
             const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: AppConstants.languages.map((lang) {
-                final isSelected = _selectedLanguage == lang['code'];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: ChoiceChip(
-                    label: Text(lang['native'] as String),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      if (selected) {
-                        setState(() => _selectedLanguage = lang['code'] as String);
-                      }
-                    },
-                    selectedColor: AppColors.primary.withOpacity(0.1),
-                    backgroundColor: Colors.white,
-                  ),
-                );
-              }).toList(),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: AppConstants.languages.map((lang) {
+                  final isSelected = _selectedLanguage == lang['code'];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: ChoiceChip(
+                      label: Text(lang['native'] as String),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() => _selectedLanguage = lang['code'] as String);
+                        }
+                      },
+                      selectedColor: AppColors.primary.withOpacity(0.1),
+                      backgroundColor: cardColor,
+                      labelStyle: TextStyle(
+                        color: isSelected ? AppColors.primary : textPrimary,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ],
         ),
@@ -445,7 +471,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   // Page 4: Daily Goal
-  Widget _buildGoalPage() {
+  Widget _buildGoalPage(bool isDark, Color textPrimary, Color textSecondary, Color surfaceColor, Color cardColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -454,7 +480,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Container(
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.secondary,
               shape: BoxShape.circle,
             ),
@@ -462,20 +488,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 size: 40, color: AppColors.primary),
           ),
           const SizedBox(height: 32),
-          const Text(
+          Text(
             'Set Your Daily Goal',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: textPrimary,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'How many mantras would you like to chant daily?',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: textSecondary,
             ),
           ),
           const SizedBox(height: 32),
@@ -484,7 +510,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.secondary,
+              color: isDark ? AppColors.darkCard : AppColors.secondary,
               borderRadius: BorderRadius.circular(24),
             ),
             child: Column(
@@ -497,11 +523,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     color: AppColors.primary,
                   ),
                 ),
-                const Text(
+                Text(
                   'chants per day',
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppColors.textSecondary,
+                    color: textSecondary,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -537,13 +563,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildGoalChip(21),
+              _buildGoalChip(21, isDark, textPrimary, cardColor),
               const SizedBox(width: 8),
-              _buildGoalChip(108),
+              _buildGoalChip(108, isDark, textPrimary, cardColor),
               const SizedBox(width: 8),
-              _buildGoalChip(216),
+              _buildGoalChip(216, isDark, textPrimary, cardColor),
               const SizedBox(width: 8),
-              _buildGoalChip(1080),
+              _buildGoalChip(1080, isDark, textPrimary, cardColor),
             ],
           ),
         ],
@@ -555,6 +581,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final localeProvider = context.read<LocaleProvider>();
     final locCode = localeProvider.localeCode;
     final textController = TextEditingController();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -576,9 +605,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             return Container(
               padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : Colors.white,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -596,7 +625,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   const SizedBox(height: 20),
                   Text(
                     Translations.get('select_language', locale: locCode),
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textPrimary),
                   ),
                   const SizedBox(height: 16),
                   // Search field
@@ -617,24 +646,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             )
                           : null,
                       filled: true,
-                      fillColor: Colors.grey.shade100,
+                      fillColor: isDark ? AppColors.darkCard : Colors.grey.shade100,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide.none,
                       ),
                       contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+                    style: TextStyle(fontSize: 14, color: textPrimary),
                   ),
                   const SizedBox(height: 12),
                   // Results count
                   if (query.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: Text(
-                        '${filteredLocales.length} ${filteredLocales.length == 1 ? 'language' : 'languages'} found',
-                        style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-                      ),
+                          child: Text(
+                            '${filteredLocales.length} ${filteredLocales.length == 1 ? 'language' : 'languages'} found',
+                            style: TextStyle(fontSize: 12, color: textSecondary),
+                          ),
                     ),
                   // Language list
                   ConstrainedBox(
@@ -653,20 +682,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
                           child: GestureDetector(
-                            onTap: () {
-                              localeProvider.setLocale(code);
+                            onTap: () async {
+                              await localeProvider.setLocale(code);
                               textController.dispose();
-                              Navigator.pop(ctx);
-                              setState(() => _selectedLanguage = code);
+                              if (ctx.mounted) Navigator.pop(ctx);
+                              if (mounted) setState(() => _selectedLanguage = code);
                             },
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                               decoration: BoxDecoration(
-                                color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.grey.shade50,
+                                color: isSelected ? AppColors.primary.withOpacity(0.1) : (isDark ? AppColors.darkCard : Colors.grey.shade50),
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
-                                  color: isSelected ? AppColors.primary : Colors.grey.shade200,
+                                  color: isSelected ? AppColors.primary : (isDark ? AppColors.textLight.withOpacity(0.2) : Colors.grey.shade200),
                                   width: isSelected ? 1.5 : 1,
                                 ),
                               ),
@@ -679,10 +708,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Center(
-                                      child: Text(badge, style: TextStyle(
-                                        fontSize: 12, fontWeight: FontWeight.bold,
-                                        color: isSelected ? Colors.white : Colors.grey.shade600,
-                                      )),
+                                    child: Text(badge, style: TextStyle(
+                                      fontSize: 12, fontWeight: FontWeight.bold,
+                                      color: isSelected ? Colors.white : (isDark ? AppColors.textSecondary : Colors.grey.shade600),
+                                    )),
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -693,12 +722,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         Text(native, style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                          color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                                          color: isSelected ? AppColors.primary : textPrimary,
                                         )),
                                         if (query.isNotEmpty)
                                           Text(
                                             lang['name'] ?? '',
-                                            style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                                            style: TextStyle(fontSize: 11, color: textSecondary),
                                           ),
                                       ],
                                     ),
@@ -717,16 +746,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 32),
                       child: Center(
-                        child: Column(
-                          children: [
-                            Icon(Icons.search_off_rounded, size: 40, color: AppColors.textLight),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'No languages found',
-                              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
-                            ),
-                          ],
-                        ),
+                          child: Column(
+                            children: [
+                              Icon(Icons.search_off_rounded, size: 40, color: textSecondary),
+                              const SizedBox(height: 8),
+                              Text(
+                                'No languages found',
+                                style: TextStyle(fontSize: 14, color: textSecondary),
+                              ),
+                            ],
+                          ),
                       ),
                     ),
                   const SizedBox(height: 12),
@@ -739,7 +768,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildGoalChip(int goal) {
+  Widget _buildGoalChip(int goal, bool isDark, Color textPrimary, Color cardColor) {
     return GestureDetector(
       onTap: () => setState(() => _dailyGoal = goal),
       child: Container(
@@ -747,12 +776,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         decoration: BoxDecoration(
           color: _dailyGoal == goal
               ? AppColors.primary
-              : Colors.white,
+              : cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: _dailyGoal == goal
                 ? AppColors.primary
-                : AppColors.textLight.withOpacity(0.2),
+                : (isDark ? AppColors.textLight.withOpacity(0.2) : AppColors.textLight.withOpacity(0.2)),
           ),
         ),
         child: Text(
@@ -760,7 +789,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: _dailyGoal == goal ? Colors.white : AppColors.textPrimary,
+            color: _dailyGoal == goal ? Colors.white : textPrimary,
           ),
         ),
       ),

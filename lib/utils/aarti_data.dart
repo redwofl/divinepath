@@ -6,7 +6,7 @@ class Aarti {
   final String title; // English title, e.g. "Ganesh Aarti"
   final String titleHindi; // Devanagari title, e.g. "श्री गणेश आरती"
   final String deity; // short deity name shown on cards
-  final String icon; // emoji icon
+  final String icon; // asset path to the deity icon image
   final Color color; // accent color for the card/detail
   final String description; // one-line intro
   final List<String> verses; // each element is one verse (group of lines)
@@ -33,7 +33,7 @@ class AartiData {
       title: 'Ganesh Aarti',
       titleHindi: 'श्री गणेश आरती',
       deity: 'Lord Ganesha',
-      icon: '🐘',
+      icon: 'assets/images/deities/ganesh-icon.png',
       color: Color(0xFFDC2626),
       description: 'Jai Ganesh Jai Ganesh Deva — the beloved Aarti of Lord Ganesha, remover of obstacles.',
       verses: [
@@ -50,7 +50,7 @@ class AartiData {
       title: 'Durga Aarti',
       titleHindi: 'जय अम्बे गौरी',
       deity: 'Maa Durga',
-      icon: '🦁',
+      icon: 'assets/images/deities/durga_icon.png',
       color: Color(0xFFB91C1C),
       description: 'Jai Ambe Gauri — the powerful Aarti of Goddess Durga, slayer of Mahishasura.',
       verses: [
@@ -67,7 +67,7 @@ class AartiData {
       title: 'Lakshmi Aarti',
       titleHindi: 'ॐ जय लक्ष्मी माता',
       deity: 'Maa Lakshmi',
-      icon: '💰',
+      icon: 'assets/images/deities/lashmi_icon.png',
       color: Color(0xFFEAB308),
       description: 'Om Jai Lakshmi Mata — the Aarti of Goddess Lakshmi, bestower of wealth and prosperity.',
       verses: [
@@ -81,7 +81,7 @@ class AartiData {
       title: 'Shiv Aarti',
       titleHindi: 'ॐ जय शिव ओंकारा',
       deity: 'Lord Shiva',
-      icon: '🔱',
+      icon: 'assets/images/deities/shiv_icon.png',
       color: Color(0xFF4F46E5),
       description: 'Om Jai Shiv Omkara — the sublime Aarti of Lord Shiva, the great ascetic and destroyer.',
       verses: [
@@ -96,7 +96,7 @@ class AartiData {
       title: 'Hanuman Aarti',
       titleHindi: 'आरती कीजै हनुमान लला की',
       deity: 'Hanuman Ji',
-      icon: '🐒',
+      icon: 'assets/images/deities/hanuman-icon.png',
       color: Color(0xFFEA580C),
       description: 'Aarti Keejai Hanuman Lala Ki — the fiery Aarti of Lord Hanuman, the mightiest devotee.',
       verses: [
@@ -112,7 +112,7 @@ class AartiData {
       title: 'Krishna Aarti',
       titleHindi: 'आरती कुंजबिहारी की',
       deity: 'Lord Krishna',
-      icon: '🦚',
+      icon: 'assets/images/deities/krishna_icon.png',
       color: Color(0xFF2563EB),
       description: 'Aarti Kunj Bihari Ki — the enchanting Aarti of Lord Krishna, the flute-playing cowherd.',
       verses: [
@@ -126,7 +126,7 @@ class AartiData {
       title: 'Vishnu Aarti',
       titleHindi: 'ॐ जय जगदीश हरे',
       deity: 'Lord Vishnu',
-      icon: '🌀',
+      icon: 'assets/images/deities/vishnu_icon.png',
       color: Color(0xFF1D4ED8),
       description: 'Om Jai Jagdish Hare — the universal Aarti of Lord Vishnu, the preserver of the universe.',
       verses: [
@@ -145,7 +145,7 @@ class AartiData {
       title: 'Saraswati Aarti',
       titleHindi: 'ॐ जय सरस्वती माता',
       deity: 'Maa Saraswati',
-      icon: '🎼',
+      icon: 'assets/images/deities/saraswati_icon.png',
       color: Color(0xFFA78BFA),
       description: 'Om Jai Saraswati Mata — the Aarti of Goddess Saraswati, giver of knowledge and wisdom.',
       verses: [
@@ -159,7 +159,7 @@ class AartiData {
       title: 'Sai Baba Aarti',
       titleHindi: 'ॐ जय साईं बाबा',
       deity: 'Sai Baba',
-      icon: '🙏',
+      icon: 'assets/images/deities/sai_baba_icon.png',
       color: Color(0xFFF97316),
       description: 'Om Jai Sai Baba — the beloved Aarti of Shirdi Sai Baba, the saint who lived for all.',
       verses: [
@@ -173,7 +173,7 @@ class AartiData {
       title: 'Santoshi Mata Aarti',
       titleHindi: 'जय सन्तोषी माता',
       deity: 'Maa Santoshi',
-      icon: '🌺',
+      icon: 'assets/images/deities/maa_santoshi_icon.png',
       color: Color(0xFFEC4899),
       description: 'Jai Santoshi Mata — the Aarti of Goddess Santoshi, the mother of contentment.',
       verses: [

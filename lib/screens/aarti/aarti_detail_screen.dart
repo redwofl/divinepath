@@ -47,29 +47,48 @@ class _AartiDetailScreenState extends State<AartiDetailScreen> {
                 child: Stack(
                   children: [
                     Center(
-                      child: Container(
-                        width: 92,
-                        height: 92,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.85),
-                          border: Border.all(
-                            color: color.withOpacity(0.35),
-                            width: 2,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: color.withOpacity(0.25),
-                              blurRadius: 24,
-                              offset: const Offset(0, 6),
+                        child: Container(
+                          width: 105,
+                          height: 105,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            border: Border.all(
+                              color: color.withOpacity(0.35),
+                              width: 2,
                             ),
-                          ],
+                            boxShadow: [
+                              BoxShadow(
+                                color: color.withOpacity(0.25),
+                                blurRadius: 24,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: Container(
+                            width: 105,
+                            height: 105,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            foregroundDecoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: color,
+                                width: 5,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                aarti.icon,
+                                width: 105,
+                                height: 105,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                        child: Center(
-                          child: Text(aarti.icon,
-                              style: const TextStyle(fontSize: 42)),
-                        ),
-                      ),
                     ),
                     Positioned(
                       bottom: 0,

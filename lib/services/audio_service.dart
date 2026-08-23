@@ -78,10 +78,13 @@ class AudioService {
     }
   }
 
-  /// Set volume
+  /// Set volume (applies to BOTH background music and sound effects)
   Future<void> setVolume(double volume) async {
     _volume = volume;
     await _audioPlayer.setVolume(volume);
+    try {
+      await _sfxPlayer.setVolume(volume);
+    } catch (_) {}
   }
 
   /// Set the audio source on a player.
@@ -104,8 +107,11 @@ class AudioService {
   }
 
   /// Play sound effect (uses dedicated SFX player, won't interrupt ambient)
-  Future<bool> playSfx(String source, {bool isAsset = false}) async {
+  /// [speed] adjusts playback speed/pitch (e.g. >1 raises the pitch).
+  Future<bool> playSfx(String source,
+      {bool isAsset = false, double speed = 1.0}) async {
     try {
+      await _sfxPlayer.setSpeed(speed);
       await _setSource(_sfxPlayer, source, isAsset: isAsset);
       await _sfxPlayer.seek(Duration.zero);
       _startPlayback(_sfxPlayer, onError: (e) {

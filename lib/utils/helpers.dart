@@ -169,15 +169,12 @@ class Helpers {
     String timeGreeting;
     if (hour < 12) {
       if (locale == 'hi') timeGreeting = 'सुप्रभात';
-      else if (locale == 'sa') timeGreeting = 'सुप्रभातम्';
       else timeGreeting = 'Good Morning';
     } else if (hour < 17) {
       if (locale == 'hi') timeGreeting = 'शुभ दोपहर';
-      else if (locale == 'sa') timeGreeting = 'शुभमध्याह्नः';
       else timeGreeting = 'Good Afternoon';
     } else {
       if (locale == 'hi') timeGreeting = 'शुभ संध्या';
-      else if (locale == 'sa') timeGreeting = 'शुभसन्ध्या';
       else timeGreeting = 'Good Evening';
     }
     return timeGreeting;

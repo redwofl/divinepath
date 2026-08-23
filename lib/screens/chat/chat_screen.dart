@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../providers/chat_provider.dart';
+import '../../providers/locale_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/chat_model.dart';
 import '../../utils/helpers.dart';
+import '../../utils/translations.dart';
 import '../../widgets/common/language_switcher_button.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -47,6 +49,12 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ChatProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
+    final textLight = AppColors.textLight;
+    final cardColor = isDark ? AppColors.darkCard : Colors.white;
+    final surfaceColor = isDark ? AppColors.darkSurface : AppColors.secondary;
 
     return Scaffold(
       body: SafeArea(
@@ -84,24 +92,30 @@ class _ChatScreenState extends State<ChatScreen> {
                         color: Colors.white, size: 22),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Divine Guide AI',
+                          Translations.t('chat_empty_title',
+                              locale: context
+                                  .read<LocaleProvider>()
+                                  .localeCode),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: textPrimary,
                           ),
                         ),
                         SizedBox(height: 2),
                         Text(
-                          'Spiritual Assistant',
+                          Translations.t('chat_spiritual_assistant',
+                              locale: context
+                                  .read<LocaleProvider>()
+                                  .localeCode),
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.textSecondary,
+                            color: textSecondary,
                           ),
                         ),
                       ],
@@ -118,7 +132,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppColors.secondary,
+                        color: surfaceColor,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(Icons.edit_rounded,
@@ -132,17 +146,17 @@ class _ChatScreenState extends State<ChatScreen> {
             // Messages
             Expanded(
               child: provider.messages.isEmpty
-                  ? _buildEmptyState(provider)
+                  ? _buildEmptyState(provider, isDark, textPrimary, textSecondary, cardColor, surfaceColor, textLight)
                   : ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.all(20),
                       itemCount: provider.messages.length + (_showSuggestions ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index >= provider.messages.length) {
-                          return _showSuggestions ? _buildSuggestions(provider) : const SizedBox.shrink();
+                          return _showSuggestions ? _buildSuggestions(provider, isDark, textPrimary, textSecondary, cardColor, surfaceColor, textLight) : const SizedBox.shrink();
                         }
-                        final message = provider.messages[index];
-                        return _buildMessageBubble(message);
+                         final message = provider.messages[index];
+                         return _buildMessageBubble(message, isDark, textPrimary, textSecondary, cardColor, surfaceColor, textLight);
                       },
                     ),
             ),
@@ -210,18 +224,22 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: cardColor,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: AppColors.textLight.withOpacity(0.2),
+                          color: textLight.withOpacity(0.2),
                         ),
                       ),
                       child: TextField(
                         controller: _messageController,
                         textCapitalization: TextCapitalization.sentences,
                         maxLines: 1,
+                        style: TextStyle(color: textPrimary),
                         decoration: InputDecoration(
-                          hintText: 'Ask something spiritual...',
+                          hintText: Translations.t('chat_hint',
+                              locale:
+                                  context.read<LocaleProvider>().localeCode),
+                          hintStyle: TextStyle(color: textSecondary),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 14),
@@ -260,7 +278,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildEmptyState(ChatProvider provider) {
+  Widget _buildEmptyState(ChatProvider provider, bool isDark, Color textPrimary, Color textSecondary, Color cardColor, Color surfaceColor, Color textLight) {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -286,24 +304,26 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        const Center(
+        Center(
           child: Text(
-            'Divine Guide AI',
+            Translations.t('chat_empty_title',
+                locale: context.read<LocaleProvider>().localeCode),
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: textPrimary,
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        const Center(
+        SizedBox(height: 8),
+        Center(
           child: Text(
-            'Ask anything about spirituality, meditation,\nsacred texts, or life\'s deepest questions.',
+            Translations.t('chat_empty_description',
+                locale: context.read<LocaleProvider>().localeCode),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: textSecondary,
               height: 1.5,
             ),
           ),
@@ -311,70 +331,76 @@ class _ChatScreenState extends State<ChatScreen> {
         const SizedBox(height: 32),
 
         // Suggested questions
-        _buildSuggestions(provider),
+        _buildSuggestions(provider, isDark, textPrimary, textSecondary, cardColor, surfaceColor, textLight),
       ],
     );
   }
 
-  Widget _buildSuggestions(ChatProvider provider) {
+  Widget _buildSuggestions(ChatProvider provider, bool isDark, Color textPrimary, Color textSecondary, Color cardColor, Color surfaceColor, Color textLight) {
     final questions = provider.getSuggestedQuestions();
+    final locale = context.read<LocaleProvider>().localeCode;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(bottom: 12),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
           child: Text(
-            'Try asking:',
+            Translations.t('chat_try_asking', locale: locale),
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              color: textSecondary,
             ),
           ),
         ),
-        ...questions.map((q) => Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: GestureDetector(
-            onTap: () {
-              provider.sendMessage(q.question);
-              _showSuggestions = false;
-            },
-            child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.secondary.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppColors.primary.withOpacity(0.1),
+        ...questions.map((q) {
+          final localizedQuestion = q.translationKey.isNotEmpty
+              ? Translations.t(q.translationKey, locale: locale)
+              : q.question;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: GestureDetector(
+              onTap: () {
+                provider.sendMessage(localizedQuestion);
+                _showSuggestions = false;
+              },
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: surfaceColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: AppColors.primary.withOpacity(0.1),
+                  ),
                 ),
-              ),
-              child: Row(
-                children: [
-                  if (q.icon != null) ...[
-                    Text(q.icon!, style: const TextStyle(fontSize: 18)),
-                    const SizedBox(width: 10),
-                  ],
-                  Expanded(
-                    child: Text(
-                      q.question,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textPrimary,
+                child: Row(
+                  children: [
+                    if (q.icon != null) ...[
+                      Text(q.icon!, style: const TextStyle(fontSize: 18)),
+                      const SizedBox(width: 10),
+                    ],
+                    Expanded(
+                      child: Text(
+                        localizedQuestion,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: textPrimary,
+                        ),
                       ),
                     ),
-                  ),
-                  const Icon(Icons.arrow_forward_ios_rounded,
-                      size: 12, color: AppColors.textLight),
-                ],
+                    Icon(Icons.arrow_forward_ios_rounded,
+                        size: 12, color: textLight),
+                  ],
+                ),
               ),
             ),
-          ),
-        )),
+          );
+        }),
       ],
     );
   }
 
-  Widget _buildMessageBubble(ChatMessage message) {
+  Widget _buildMessageBubble(ChatMessage message, bool isDark, Color textPrimary, Color textSecondary, Color cardColor, Color surfaceColor, Color textLight) {
     final provider = context.read<ChatProvider>();
     final isUser = message.isUser;
 
@@ -404,7 +430,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isUser ? AppColors.primary : Colors.white,
+                color: isUser ? AppColors.primary : cardColor,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -415,7 +441,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: (isUser ? AppColors.primary : AppColors.textLight)
+                    color: (isUser ? AppColors.primary : textLight)
                         .withOpacity(0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
@@ -429,7 +455,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     message.content,
                     style: TextStyle(
                       fontSize: 15,
-                      color: isUser ? Colors.white : AppColors.textPrimary,
+                      color: isUser ? Colors.white : textPrimary,
                       height: 1.5,
                     ),
                   ),
@@ -443,7 +469,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           fontSize: 11,
                           color: isUser
                               ? Colors.white.withOpacity(0.6)
-                              : AppColors.textLight,
+                              : textLight,
                         ),
                       ),
                       if (!isUser) ...[
@@ -465,7 +491,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 ? Icons.volume_up_rounded
                                 : Icons.volume_up_outlined,
                             size: 16,
-                            color: AppColors.textLight,
+                            color: textLight,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -475,15 +501,19 @@ class _ChatScreenState extends State<ChatScreen> {
                                 ClipboardData(text: message.content));
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Copied to clipboard'),
+                                SnackBar(
+                                  content: Text(Translations.t(
+                                      'copied_to_clipboard',
+                                      locale: context
+                                          .read<LocaleProvider>()
+                                          .localeCode)),
                                   duration: Duration(seconds: 1),
                                 ),
                               );
                             }
                           },
-                          child: const Icon(Icons.copy_rounded,
-                              size: 16, color: AppColors.textLight),
+                           child: Icon(Icons.copy_rounded,
+                               size: 16, color: textLight),
                         ),
                       ],
                     ],

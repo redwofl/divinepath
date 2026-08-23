@@ -14,6 +14,10 @@ class GitaVersesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isHindi = context.watch<LocaleProvider>().isHindi;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
+    final cardColor = isDark ? AppColors.darkSurface : Colors.white;
     final chapter = AppConstants.gitaChapters[chapterNumber - 1];
     final totalVerses = int.parse(chapter['verses']!);
     final chapterName = isHindi && chapter['nameHindi'] != null
@@ -38,7 +42,7 @@ class GitaVersesScreen extends StatelessWidget {
               chapterName,
               style: TextStyle(
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                color: textSecondary,
                 fontFamily: isHindi ? 'Mukta' : null,
               ),
             ),
@@ -57,7 +61,7 @@ class GitaVersesScreen extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: AppColors.primary.withOpacity(0.1),
@@ -93,7 +97,7 @@ class GitaVersesScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
+                              color: textPrimary,
                               fontFamily: isHindi ? 'Mukta' : null,
                             ),
                           ),

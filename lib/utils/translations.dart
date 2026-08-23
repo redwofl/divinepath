@@ -70,9 +70,34 @@ class Translations {
       'extra_life_granted': '🙏 Extra life granted! Keep going!',
       'ad_not_available': 'Ad is not available right now. Please try again.',
 
+      // Chat Screen
+      'chat_title': 'Divine Guide AI',
+      'chat_subtitle': 'Spiritual Assistant',
+      'chat_hint': 'Ask something spiritual...',
+      'chat_empty_title': 'Divine Guide AI',
+      'chat_empty_description':
+          'Ask anything about spirituality, meditation,\nsacred texts, or life\'s deepest questions.',
+      'chat_try_asking': 'Try asking:',
+      'chat_spiritual_assistant': 'Spiritual Assistant',
+      'chat_suggestion_1':
+          'What is the purpose of life according to Bhagavad Gita?',
+      'chat_suggestion_2': 'How can I find inner peace?',
+      'chat_suggestion_3': 'How to deal with anxiety and stress?',
+      'chat_suggestion_4': 'What is the meaning of karma?',
+      'chat_suggestion_5': 'How to practice mindfulness daily?',
+      'chat_suggestion_6': 'What does Gita say about success?',
+      'chat_suggestion_7': 'How to develop a meditation habit?',
+      'chat_suggestion_8': 'What is the power of mantra chanting?',
+      'chat_suggestion_9': 'How to overcome fear and doubt?',
+      'chat_suggestion_10': 'What is dharma and how to follow it?',
+      'chat_welcome':
+          'Namaste! 🙏 I am Divine Guide AI, a spiritual assistant inspired by sacred teachings. How may I help you on your spiritual journey today? You can ask me about meditation, mantra chanting, spiritual texts like the Bhagavad Gita, or any questions about life and spirituality.',
+      'copied_to_clipboard': 'Copied to clipboard',
+
       // Stories Screen
       'sacred_stories': 'Sacred Stories',
-      'sacred_stories_subtitle': 'Explore timeless wisdom from ancient scriptures',
+      'sacred_stories_subtitle':
+          'Explore timeless wisdom from ancient scriptures',
       'all_stories': 'All Stories',
       'stories_count': '{count} stories',
       'stories_stat': 'Stories',
@@ -91,11 +116,13 @@ class Translations {
       'show_all_stories': 'Show All Stories',
       'min_read': '{count} min read',
       'story_coming_soon': 'Story content coming soon',
-      'story_coming_soon_desc': 'The full story text for this tale will be added shortly.',
+      'story_coming_soon_desc':
+          'The full story text for this tale will be added shortly.',
 
       // Aarti Screen
       'aartis': 'Aartis',
-      'aarti_subtitle': 'Read devotional aartis in Devanagari — Ganesh, Durga, Lakshmi & more',
+      'aarti_subtitle':
+          'Read devotional aartis in Devanagari — Ganesh, Durga, Lakshmi & more',
       'aarti_home_subtitle': 'Ganesh, Durga, Lakshmi & more',
       'aarti_stories_chip': 'Aartis',
       'listen': 'Listen',
@@ -110,12 +137,14 @@ class Translations {
       'saved_stories_verses': 'Saved stories and verses',
       'saved_verses': 'Saved Verses',
       'no_saved_verses': 'No saved verses yet',
-      'saved_verses_hint': 'Tap the bookmark icon on any Gita verse to save it here.',
+      'saved_verses_hint':
+          'Tap the bookmark icon on any Gita verse to save it here.',
 
       // Gita Search
       'search_gita': 'Search Gita',
       'search_hint': 'Search by keyword e.g. karma, dharma…',
-      'search_prompt': 'Search across all 18 chapters for a word or phrase — like karma, dharma, yoga or soul.',
+      'search_prompt':
+          'Search across all 18 chapters for a word or phrase — like karma, dharma, yoga or soul.',
       'no_results': 'No verses found',
       'results_count': '{count} verses found',
       'achievements': 'Achievements',
@@ -188,11 +217,31 @@ class Translations {
       'hindi': 'हिन्दी',
       'sanskrit': 'संस्कृतम्',
     },
-
     'hi': {
       // App
       'appName': 'दिव्यपथ',
       'appTagline': 'आपका आध्यात्मिक साथी',
+
+      // Chat
+      'chat_welcome':
+          'नमस्ते! 🙏 मैं डिवाइन गाइड AI हूँ, पवित्र शिक्षाओं से प्रेरित एक आध्यात्मिक सहायक। आज आपकी आध्यात्मिक यात्रा में मैं आपकी कैसे मदद कर सकता हूँ? आप मुझसे ध्यान, मंत्र जप, भगवद् गीता जैसे आध्यात्मिक ग्रंथों, या जीवन और अध्यात्म से जुड़े किसी भी प्रश्न के बारे में पूछ सकते हैं।',
+      'chat_hint': 'कुछ आध्यात्मिक पूछें...',
+      'chat_empty_title': 'डिवाइन गाइड AI',
+      'chat_empty_description':
+          'अध्यात्म, ध्यान,\nपवित्र ग्रंथों या जीवन के गहरे प्रश्नों के बारे में कुछ भी पूछें.',
+      'chat_try_asking': 'यह पूछें:',
+      'chat_spiritual_assistant': 'आध्यात्मिक सहायक',
+      'chat_suggestion_1': 'भगवद् गीता के अनुसार जीवन का उद्देश्य क्या है?',
+      'chat_suggestion_2': 'मैं भीतर की शांति कैसे पा सकता हूँ?',
+      'chat_suggestion_3': 'चिंता और तनाव से कैसे निपटें?',
+      'chat_suggestion_4': 'कर्म का अर्थ क्या है?',
+      'chat_suggestion_5': 'रोज़ सचेतनता (माइंडफुलनेस) का अभ्यास कैसे करें?',
+      'chat_suggestion_6': 'सफलता के बारे में गीता क्या कहती है?',
+      'chat_suggestion_7': 'ध्यान की आदत कैसे विकसित करें?',
+      'chat_suggestion_8': 'मंत्र जप की शक्ति क्या है?',
+      'chat_suggestion_9': 'भय और संशय पर कैसे विजय पाएँ?',
+      'chat_suggestion_10': 'धर्म क्या है और उसका पालन कैसे करें?',
+      'copied_to_clipboard': 'क्लिपबोर्ड पर कॉपी हो गया',
 
       // Navigation
       'nav_home': 'होम',
@@ -257,7 +306,8 @@ class Translations {
 
       // Stories Screen
       'sacred_stories': 'पवित्र कहानियाँ',
-      'sacred_stories_subtitle': 'प्राचीन शास्त्रों से कालजयी ज्ञान की खोज करें',
+      'sacred_stories_subtitle':
+          'प्राचीन शास्त्रों से कालजयी ज्ञान की खोज करें',
       'all_stories': 'सभी कहानियाँ',
       'stories_count': '{count} कहानियाँ',
       'stories_stat': 'कहानियाँ',
@@ -280,7 +330,8 @@ class Translations {
 
       // Aarti Screen
       'aartis': 'आरतियाँ',
-      'aarti_subtitle': 'देवनागरी में भक्ति आरतियाँ पढ़ें — गणेश, दुर्गा, लक्ष्मी और अधिक',
+      'aarti_subtitle':
+          'देवनागरी में भक्ति आरतियाँ पढ़ें — गणेश, दुर्गा, लक्ष्मी और अधिक',
       'aarti_home_subtitle': 'गणेश, दुर्गा, लक्ष्मी और अधिक',
       'aarti_stories_chip': 'आरतियाँ',
       'listen': 'सुनें',
@@ -295,12 +346,14 @@ class Translations {
       'saved_stories_verses': 'सहेजी गई कहानियाँ और श्लोक',
       'saved_verses': 'सहेजे गए श्लोक',
       'no_saved_verses': 'अभी कोई श्लोक सहेजा नहीं गया',
-      'saved_verses_hint': 'किसी भी गीता श्लोक पर बुकमार्क आइकन टैप करके इसे यहाँ सहेजें।',
+      'saved_verses_hint':
+          'किसी भी गीता श्लोक पर बुकमार्क आइकन टैप करके इसे यहाँ सहेजें।',
 
       // Gita Search
       'search_gita': 'गीता खोजें',
       'search_hint': 'कीवर्ड से खोजें जैसे कर्म, धर्म…',
-      'search_prompt': 'सभी 18 अध्यायों में शब्द या वाक्य खोजें — जैसे कर्म, धर्म, योग या आत्मा।',
+      'search_prompt':
+          'सभी 18 अध्यायों में शब्द या वाक्य खोजें — जैसे कर्म, धर्म, योग या आत्मा।',
       'no_results': 'कोई श्लोक नहीं मिला',
       'results_count': '{count} श्लोक मिले',
       'achievements': 'उपलब्धियाँ',
@@ -373,167 +426,31 @@ class Translations {
       'hindi': 'हिन्दी',
       'sanskrit': 'संस्कृतम्',
     },
-
-    'sa': {
-      // App
-      'appName': 'दिव्यपथः',
-      'appTagline': 'भवतः आध्यात्मिकः सङ्गी',
-
-      // Navigation
-      'nav_home': 'गृहम्',
-      'nav_mantra': 'मन्त्रः',
-      'nav_game': 'क्रीडा',
-      'nav_stories': 'कथाः',
-      'nav_gita': 'गीता',
-      'nav_chat': 'AI सम्भाषणम्',
-
-      // Home Screen
-      'good_morning': 'सुप्रभातम्',
-      'good_afternoon': 'शुभमध्याह्नः',
-      'good_evening': 'शुभसन्ध्या',
-      'seeker': 'साधकः',
-      'day_streak': 'दिनानाम् सातत्यम्',
-      'todays_chants': "अद्य जपाः",
-      'daily_wisdom': 'दैनिकं ज्ञानम्',
-      'daily_goal': 'दैनिकं लक्ष्यम्',
-      'daily_goal_completed': 'दैनिकं लक्ष्यं पूर्णम्! 🎉',
-      'your_journey': 'भवतः यात्रा',
-      'total_chants': 'कुलजपाः',
-      'total_malas': 'कुलमालाः',
-      'longest_streak': 'दीर्घतमं सातत्यम्',
-      'level': 'स्तरः',
-      'quick_actions': 'शीघ्रक्रियाः',
-      'chant': 'जपः',
-      'meditate': 'ध्यानम्',
-      'read': 'पठतु',
-      'ask_ai': 'AI पृच्छतु',
-      'recent_activity': 'नूतनक्रियाः',
-      'chanted_times': '{count} वारं जपितम्',
-
-      // Mantra Screen
-      'mantra_chanting': 'मन्त्रजपः',
-      'tap_to_chant': 'जपाय स्पृशतु',
-      'tap_to_start': 'आरम्भाय स्पृशतु',
-      'auto_mode': 'स्वचालितः मोडः ●',
-      'this_session': 'अस्मिन् सत्रे',
-      'total_malas_short': 'कुलमालाः',
-      'daily': 'दैनिकम्',
-      'today': 'अद्य',
-      'end_session_save': 'सत्रं समाप्य रक्षतु',
-      'start_chanting': 'जपम् आरभताम्',
-      'select_mantra': 'मन्त्रं चिनोतु',
-      'chants': 'जपाः',
-
-      // Game Screen
-      'divine_bubbles': 'दिव्याः बुद्बुदाः',
-      'pop_divine_names': 'दिव्यनामानि पतनात् पूर्वं स्फोटयतु!',
-      'miss_one_game_over': 'एकः च्युतः चेत् क्रीडा समाप्ता!',
-      'start_game': 'क्रीडाम् आरभताम्',
-      'high_score': 'उच्चं स्कोर्',
-      'game_over': 'क्रीडा समाप्ता!',
-      'bubble_missed': 'एकः बुद्बुदः च्युतः...',
-      'your_score': 'भवतः स्कोर्',
-      'new_high_score': 'नूतनः उच्चः स्कोर्!',
-      'play_again': 'पुनः क्रीडतु',
-      'back_to_menu': 'सूचीपटं प्रति गच्छतु',
-      'watch_ad_extra_life': 'प्रचारं पश्यतु • अतिरिक्तं जीवनम्',
-      'extra_life_granted': '🙏 अतिरिक्तं जीवनं प्राप्तम्! गच्छतु!',
-      'ad_not_available': 'प्रचारः अधुना उपलब्धः नास्ति। पुनः प्रयतताम्।',
-
-      // Stories Screen
-      'sacred_stories': 'पवित्राः कथाः',
-      'sacred_stories_subtitle': 'प्राचीनेषु शास्त्रेषु कालजयीं ज्ञानं अन्वेष्टुम्',
-      'all_stories': 'सर्वाः कथाः',
-      'stories_count': '{count} कथाः',
-      'stories_stat': 'कथाः',
-      'saved_stat': 'रक्षितम्',
-      'search_stories_hint': 'कथाः अन्वेष्टुम्...',
-      'featured_stories': 'विशिष्टाः कथाः',
-      'swipe_hint': 'स्वाइप',
-      'reads': 'पठितम्',
-      'quick_badge': 'शीघ्रम्',
-      'show_less': 'न्यूनं दर्शयतु',
-      'read_full_story': 'सम्पूर्णं कथां पठतु',
-      'no_stories_category': 'अस्मिन् वर्गे कथाः न सन्ति',
-      'no_stories_available': 'कथाः उपलब्धाः न सन्ति',
-      'try_different_category': 'अन्यं वर्गं प्रयतताम्',
-      'stories_will_appear': 'कथाः लोड् हुत्वा अत्र दृश्यन्ते',
-      'show_all_stories': 'सर्वाः कथाः दर्शयतु',
-      'min_read': '{count} नाडिकाः पठतु',
-      'story_coming_soon': 'कथा शीघ्रं आगच्छति',
-      'story_coming_soon_desc': 'अस्याः कथायाः सम्पूर्णः पाठः शीघ्रं योज्यते।',
-
-      // Aarti Screen
-      'aartis': 'आरतयः',
-      'aarti_subtitle': 'देवनागर्यां भक्ति-आरतयः पठ्यन्ताम् — गणेशः, दुर्गा, लक्ष्मी च',
-      'aarti_home_subtitle': 'गणेशः, दुर्गा, लक्ष्मी च',
-      'aarti_stories_chip': 'आरतयः',
-      'listen': 'शृणु',
-      'stop_listening': 'विरम',
-
-      // Profile Screen
-      'profile': 'प्रोफ़ाइल',
-      'guest': 'अतिथिः',
-      'my_mantras': 'मम मन्त्राः',
-      'view_favorite_mantras': 'प्रियमन्त्रान् पश्यतु',
-      'bookmarks': 'बुकमार्क',
-      'saved_stories_verses': 'रक्षिताः कथाः श्लोकाश्च',
-      'saved_verses': 'रक्षिताः श्लोकाः',
-      'no_saved_verses': 'न कश्चित् श्लोकः रक्षितः अस्ति',
-      'saved_verses_hint': 'कस्मिन्नपि गीताश्लोके बुकमार्क-चिह्नं स्पृष्ट्वा अत्र रक्षतु।',
-
-      // Gita Search
-      'search_gita': 'गीतां अन्विष्यताम्',
-      'search_hint': 'कीवर्डेन अन्वेषणम् यथा कर्म, धर्म…',
-      'search_prompt': 'अष्टादशसु अध्यायेषु शब्दं वाक्यं वा अन्विष्यताम् — यथा कर्म, धर्म, योगः अथवा आत्मा।',
-      'no_results': 'न कश्चित् श्लोकः प्राप्तः',
-      'results_count': '{count} श्लोकाः प्राप्ताः',
-      'achievements': 'उपलब्धयः',
-      'achievements_unlocked': '{count} उपलब्धयः उद्घाटिताः',
-      'analytics': 'विश्लेषणम्',
-      'spiritual_progress': 'आध्यात्मिकीं प्रगतिं पश्यतु',
-      'dark_mode': 'दार्क् मोडः',
-      'enabled': 'प्रवर्तितः',
-      'disabled': 'निर्वर्तितः',
-      'notifications': 'सूचनाः',
-      'manage_reminders': 'स्मारकाणि प्रबन्धयतु',
-      'language': 'भाषा',
-      'premium': 'प्रीमियम्',
-      'active': 'सक्रियः',
-      'upgrade': 'उन्नयतु',
-      'edit_profile': 'प्रोफ़ाइल सम्पादयतु',
-      'name': 'नाम',
-      'enter_name': 'भवतः नामं लिखतु',
-      'save': 'रक्षतु',
-      'settings': 'सेटिङ्ग्स',
-      'toggle_dark_theme': 'दार्क् थीम परिवर्तयतु',
-      'daily_reminders': 'प्रातः ६ वादने सायं ७ वादने च दैनिकस्मारकाणि',
-      'haptic_feedback': 'हैप्टिक् फीडबैक्',
-      'vibration_on_chant': 'जपे कम्पनम्',
-      'tap_sound': 'स्पर्शध्वनिः',
-      'tap_sound_bell': 'घण्टा',
-      'tap_sound_pop': 'पॉप्',
-      'tap_sound_om': 'ॐ जपः',
-      'tap_sound_silent': 'मौनम्',
-      'app_version': 'दिव्यपथः v1.0.0',
-      'streak': 'सातत्यम्',
-      'total_chants_short': 'कुलजपाः',
-      'meditation': 'ध्यानम्',
-      'minutes': 'निमेषाः',
-      'days': 'दिनानि',
-      'admin_panel': 'प्रशासनपटलम्',
-
-      // Language selection
-      'select_language': 'भाषां चिनोतु',
-      'english': 'English',
-      'hindi': 'हिन्दी',
-      'sanskrit': 'संस्कृतम्',
-    },
-
     'mr': {
       // App
       'appName': 'दिव्यपथ',
       'appTagline': 'तुमचा आध्यात्मिक साथी',
+
+      // Chat
+      'chat_welcome':
+          'नमस्कार! 🙏 मी डिव्हाइन गाइड AI आहे, पवित्र शिकवणींमधून प्रेरित एक आध्यात्मिक सहाय्यक. आज तुमच्या आध्यात्मिक प्रवासात मी तुमची कशी मदत करू शकतो? तुम्ही मला ध्यान, मंत्र जप, भगवद् गीतेसारख्या आध्यात्मिक ग्रंथांविषयी, किंवा जीवन व अध्यात्माबाबत कोणताही प्रश्न विचारू शकता.',
+      'chat_hint': 'काहीतरी आध्यात्मिक विचारा...',
+      'chat_empty_title': 'डिव्हाइन गाइड AI',
+      'chat_empty_description':
+          'अध्यात्म, ध्यान,\nपवित्र ग्रंथ किंवा जीवनाच्या खोल प्रश्नांबद्दल काहीही विचारा.',
+      'chat_try_asking': 'हे विचारा:',
+      'chat_spiritual_assistant': 'आध्यात्मिक सहाय्यक',
+      'chat_suggestion_1': 'भगवद् गीतेनुसार जीवनाचा उद्देश काय आहे?',
+      'chat_suggestion_2': 'मी आंतरिक शांती कशी मिळवू शकतो?',
+      'chat_suggestion_3': 'चिंता आणि ताणाशी कसे सामना करावे?',
+      'chat_suggestion_4': 'कर्माचा अर्थ काय आहे?',
+      'chat_suggestion_5': 'रोज माइंडफुलनेसचा (सजगतेचा) सराव कसा करावा?',
+      'chat_suggestion_6': 'यशाबद्दल गीता काय म्हणते?',
+      'chat_suggestion_7': 'ध्यानाची सवय कशी विकसित करावी?',
+      'chat_suggestion_8': 'मंत्र जपाची शक्ती काय आहे?',
+      'chat_suggestion_9': 'भीती आणि शंकेवर कसे मात करावे?',
+      'chat_suggestion_10': 'धर्म काय आहे आणि त्याचे पालन कसे करावे?',
+      'copied_to_clipboard': 'क्लिपबोर्डवर कॉपी झाले',
 
       // Navigation
       'nav_home': 'मुखपृष्ठ',
@@ -593,8 +510,9 @@ class Translations {
       'play_again': 'पुन्हा खेळा',
       'back_to_menu': 'मेनूवर परत जा',
       'watch_ad_extra_life': 'जाहिरात पहा • अतिरिक्त जीवन',
-      'extra_life_granted': '🙏 अतिरिक्त जीवन मिळाले! सुरू ठेवा!',
-      'ad_not_available': 'जाहिरात आत्ता उपलब्ध नाही। कृपया पुन्हा प्रयत्न करा.',
+      'extra_life_granted': ' अतिरिक्त जीवन मिळाले! सुरू ठेवा!',
+      'ad_not_available':
+          'जाहिरात आत्ता उपलब्ध नाही। कृपया पुन्हा प्रयत्न करा.',
 
       // Stories Screen
       'sacred_stories': 'पवित्र कथा',
@@ -621,7 +539,8 @@ class Translations {
 
       // Aarti Screen
       'aartis': 'आरत्या',
-      'aarti_subtitle': 'देवनागरीत भक्ती आरत्या वाचा — गणेश, दुर्गा, लक्ष्मी आणि अधिक',
+      'aarti_subtitle':
+          'देवनागरीत भक्ती आरत्या वाचा — गणेश, दुर्गा, लक्ष्मी आणि अधिक',
       'aarti_home_subtitle': 'गणेश, दुर्गा, लक्ष्मी आणि अधिक',
       'aarti_stories_chip': 'आरत्या',
       'listen': 'ऐका',
@@ -636,12 +555,14 @@ class Translations {
       'saved_stories_verses': 'जतन केलेल्या कथा आणि श्लोक',
       'saved_verses': 'साठवलेले श्लोक',
       'no_saved_verses': 'अजून कोणतेही श्लोक साठवलेले नाहीत',
-      'saved_verses_hint': 'कोणत्याही गीता श्लोकावरील बुकमार्क आयकॉनवर टॅप करून तो येथे साठवा.',
+      'saved_verses_hint':
+          'कोणत्याही गीता श्लोकावरील बुकमार्क आयकॉनवर टॅप करून तो येथे साठवा.',
 
       // Gita Search
       'search_gita': 'गीता शोधा',
       'search_hint': 'कीवर्डने शोधा जसे कर्म, धर्म…',
-      'search_prompt': 'सर्व १८ अध्यायांमध्ये शब्द किंवा वाक्य शोधा — जसे कर्म, धर्म, योग किंवा आत्मा.',
+      'search_prompt':
+          'सर्व १८ अध्यायांमध्ये शब्द किंवा वाक्य शोधा — जसे कर्म, धर्म, योग किंवा आत्मा.',
       'no_results': 'कोणताही श्लोक सापडला नाही',
       'results_count': '{count} श्लोक सापडले',
       'achievements': 'उपलब्धी',
@@ -685,11 +606,31 @@ class Translations {
       'hindi': 'हिन्दी',
       'sanskrit': 'संस्कृत',
     },
-
     'gu': {
       // App
       'appName': 'દિવ્યપથ',
       'appTagline': 'તમારો આધ્યાત્મિક સાથી',
+
+      // Chat
+      'chat_welcome':
+          'નમસ્તે! 🙏 હું ડિવાઇન ગાઇડ AI છું, પવિત્ર શીખવણીઓથી પ્રેરિત એક આધ્યાત્મિક સહાયક. આજે તમારી આધ્યાત્મિક યાત્રામાં હું તમારી કેવી રીતે મદદ કરી શકું? તમે મને ધ્યાન, મંત્ર જપ, ભગવદ્ ગીતા જેવા આધ્યાત્મિક ગ્રંથો, અથવા જીવન અને અધ્યાત્મ વિશે કોઈપણ પ્રશ્ન પૂછી શકો છો.',
+      'chat_hint': 'કંઈક આધ્યાત્મિક પૂછો...',
+      'chat_empty_title': 'ડિવાઇન ગાઇડ AI',
+      'chat_empty_description':
+          'અધ્યાત્મ, ધ્યાન,\nપવિત્ર ગ્રંથો કે જીવનના ઊંડા પ્રશ્નો વિશે કંઈપણ પૂછો.',
+      'chat_try_asking': 'આ પૂછો:',
+      'chat_spiritual_assistant': 'આધ્યાત્મિક સહાયક',
+      'chat_suggestion_1': 'ભગવદ્ ગીતા પ્રમાણે જીવનનો હેતુ શું છે?',
+      'chat_suggestion_2': 'હું આંતરિક શાંતિ કેવી રીતે મેળવી શકું?',
+      'chat_suggestion_3': 'ચિંતા અને તણાવ સાથે કેવી રીતે વ્યવહાર કરવો?',
+      'chat_suggestion_4': 'કર્મનો અર્થ શું છે?',
+      'chat_suggestion_5': 'રોજ માઇન્ડફુલનેસ (સજગતા) નો અભ્યાસ કેવી રીતે કરવો?',
+      'chat_suggestion_6': 'સફળતા વિશે ગીતા શું કહે છે?',
+      'chat_suggestion_7': 'ધ્યાનની ટેવ કેવી રીતે વિકસાવવી?',
+      'chat_suggestion_8': 'મંત્ર જપની શક્તિ શું છે?',
+      'chat_suggestion_9': 'ભય અને શંકા પર કેવી રીતે વિજય મેળવવો?',
+      'chat_suggestion_10': 'ધર્મ શું છે અને તેનું પાલન કેવી રીતે કરવું?',
+      'copied_to_clipboard': 'ક્લિપબોર્ડ પર કૉપિ થયું',
 
       // Navigation
       'nav_home': 'મુખપૃષ્ઠ',
@@ -749,7 +690,7 @@ class Translations {
       'play_again': 'ફરી રમો',
       'back_to_menu': 'મેનુ પર પાછા જાઓ',
       'watch_ad_extra_life': 'જાહેરાત જુઓ • વધારાનું જીવન',
-      'extra_life_granted': '🙏 વધારાનું જીવન મળ્યું! ચાલુ રાખો!',
+      'extra_life_granted': ' વધારાનું જીવન મળ્યું! ચાલુ રાખો!',
       'ad_not_available': 'જાહેરાત હાલ ઉપલબ્ધ નથી. કૃપા કરીને ફરી પ્રયાસ કરો.',
 
       // Stories Screen
@@ -773,11 +714,13 @@ class Translations {
       'show_all_stories': 'બધી વાર્તાઓ બતાવો',
       'min_read': '{count} મિનિટ વાંચો',
       'story_coming_soon': 'વાર્તા ટૂંકમાં આવી રહી છે',
-      'story_coming_soon_desc': 'આ વાર્તાનો સંપૂર્ણ ટેક્સ્ટ ટૂંક સમયમાં ઉમેરવામાં આવશે.',
+      'story_coming_soon_desc':
+          'આ વાર્તાનો સંપૂર્ણ ટેક્સ્ટ ટૂંક સમયમાં ઉમેરવામાં આવશે.',
 
       // Aarti Screen
       'aartis': 'આરતીઓ',
-      'aarti_subtitle': 'દેવનાગરીમાં ભક્તિ આરતીઓ વાંચો — ગણેશ, દુર્ગા, લક્ષ્મી અને વધુ',
+      'aarti_subtitle':
+          'દેવનાગરીમાં ભક્તિ આરતીઓ વાંચો — ગણેશ, દુર્ગા, લક્ષ્મી અને વધુ',
       'aarti_home_subtitle': 'ગણેશ, દુર્ગા, લક્ષ્મી અને વધુ',
       'aarti_stories_chip': 'આરતીઓ',
       'listen': 'સાંભળો',
@@ -792,12 +735,14 @@ class Translations {
       'saved_stories_verses': 'સાચવેલી વાર્તાઓ અને શ્લોક',
       'saved_verses': 'સાચવેલા શ્લોક',
       'no_saved_verses': 'હજી કોઈ શ્લોક સાચવેલો નથી',
-      'saved_verses_hint': 'કોઈપણ ગીતા શ્લોક પર બુકમાર્ક આયકન ટૅપ કરીને તેને અહીં સાચવો.',
+      'saved_verses_hint':
+          'કોઈપણ ગીતા શ્લોક પર બુકમાર્ક આયકન ટૅપ કરીને તેને અહીં સાચવો.',
 
       // Gita Search
       'search_gita': 'ગીતા શોધો',
       'search_hint': 'કીવર્ડથી શોધો જેમ કે કર્મ, ધર્મ…',
-      'search_prompt': 'બધા 18 અધ્યાયોમાં શબ્દ કે વાક્ય શોધો — જેમ કે કર્મ, ધર્મ, યોગ અથવા આત્મા.',
+      'search_prompt':
+          'બધા 18 અધ્યાયોમાં શબ્દ કે વાક્ય શોધો — જેમ કે કર્મ, ધર્મ, યોગ અથવા આત્મા.',
       'no_results': 'કોઈ શ્લોક મળ્યો નથી',
       'results_count': '{count} શ્લોક મળ્યા',
       'achievements': 'સિદ્ધિઓ',
@@ -851,7 +796,8 @@ class Translations {
 
   /// Get a translated string with placeholder replacement.
   /// Example: t('chanted_times', {'count': '5'}) => "Chanted 5 times"
-  static String t(String key, {String locale = 'en', Map<String, String>? params}) {
+  static String t(String key,
+      {String locale = 'en', Map<String, String>? params}) {
     String text = get(key, locale: locale);
     if (params != null) {
       params.forEach((k, v) {
@@ -867,7 +813,6 @@ class Translations {
     {'code': 'hi', 'name': 'Hindi', 'native': 'हिन्दी', 'badge': 'हि'},
     {'code': 'mr', 'name': 'Marathi', 'native': 'मराठी', 'badge': 'म्र'},
     {'code': 'gu', 'name': 'Gujarati', 'native': 'ગુજરાતી', 'badge': 'ગુ'},
-    {'code': 'sa', 'name': 'Sanskrit', 'native': 'संस्कृतम्', 'badge': 'सं'},
   ];
 
   /// Get badge text for a locale code

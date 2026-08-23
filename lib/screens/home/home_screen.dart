@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             localeProvider.badge,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
@@ -244,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(width: 8),
                         Text(
                       Translations.get('daily_wisdom', locale: locCode),
-                      style: TextStyle(
+                      style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -321,12 +321,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (dailyCount >= dailyGoal)
                         Row(
                           children: [
-                            Icon(Icons.check_circle_rounded,
+                            const Icon(Icons.check_circle_rounded,
                                 color: AppColors.success, size: 18),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Text(
                       Translations.get('daily_goal_completed', locale: locCode),
-                      style: TextStyle(
+                      style: const TextStyle(
                                 color: AppColors.success,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
@@ -431,7 +431,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildQuickAction(
                     icon: Icons.chat_bubble_rounded,
                     label: Translations.get('ask_ai', locale: locCode),
-                    color: Color(0xFF7C3AED),
+                    color: const Color(0xFF7C3AED),
                     onTap: () => context.go('/chat'),
                   ),
                 ],

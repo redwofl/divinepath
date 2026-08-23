@@ -13,10 +13,10 @@ class AnalyticsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20),            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Analytics',
                     style: TextStyle(
                       fontSize: 28,
@@ -24,7 +24,7 @@ class AnalyticsScreen extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const LanguageSwitcherButton(),
+                  LanguageSwitcherButton(),
                 ],
               ),
               const SizedBox(height: 4),

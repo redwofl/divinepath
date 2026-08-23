@@ -16,6 +16,7 @@ import 'services/gemini_service.dart';
 import 'services/audio_service.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
+import 'services/admob_service.dart';
 import 'utils/helpers.dart';
 import 'config/app_config.dart';
 
@@ -70,6 +71,13 @@ void main() async {
     debugPrint('Ads not available: $e');
   }
 
+  // Initialize AdMob (rewarded ads for the mala bonus; no-ops off mobile)
+  try {
+    await AdmobService.instance.initialize();
+  } catch (e) {
+    debugPrint('AdMob not available: $e');
+  }
+
   // Initialize providers
   final userProvider = UserProvider();
   await userProvider.initialize();
@@ -109,7 +117,7 @@ void main() async {
     debugPrint('Gita provider error: $e');
   }
 
-  final chatProvider = ChatProvider();
+  final chatProvider = ChatProvider(localeProvider: localeProvider);
   try {
     await chatProvider.initialize();
   } catch (e) {
@@ -190,7 +198,6 @@ class DivinePathApp extends StatelessWidget {
               Locale('hi'),
               Locale('mr'),
               Locale('gu'),
-              Locale('sa'),
             ],
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,

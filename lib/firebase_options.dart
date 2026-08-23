@@ -2,6 +2,7 @@
 ///
 /// This file was manually created from the Firebase Console configs.
 /// In production, use `flutterfire configure` to regenerate this file.
+library;
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/user_provider.dart';
 import '../utils/helpers.dart';
@@ -7,7 +6,6 @@ import '../screens/home/home_screen.dart';
 import '../screens/home/main_nav_screen.dart';
 import '../screens/mantra/mantra_counter_screen.dart';
 import '../screens/stories/stories_list_screen.dart';
-import '../screens/stories/story_detail_screen.dart';
 import '../screens/gita/gita_chapters_screen.dart';
 import '../screens/gita/gita_verses_screen.dart';
 import '../screens/gita/saved_verses_screen.dart';

@@ -12,6 +12,10 @@ class GitaChaptersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isHindi = context.watch<LocaleProvider>().isHindi;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
+    final cardColor = isDark ? AppColors.darkSurface : Colors.white;
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
@@ -26,21 +30,21 @@ class GitaChaptersScreen extends StatelessWidget {
                           children: [
                             Text(
                               isHindi ? 'श्रीमद्भगवद्गीता' : 'Bhagavad Gita',
-                              style: const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                              ),
+                              style: TextStyle(
+                                 fontSize: 28,
+                                 fontWeight: FontWeight.bold,
+                                 color: textPrimary,
+                               ),
                             ),
                             Row(
                               children: [
                                 IconButton(
                                   onPressed: () =>
                                       context.push('/verse-search'),
-                                  icon: const Icon(
-                                    Icons.search_rounded,
-                                    color: AppColors.textPrimary,
-                                  ),
+                                   icon: Icon(
+                                     Icons.search_rounded,
+                                     color: textPrimary,
+                                   ),
                                   tooltip:
                                       isHindi ? 'श्लोक खोजें' : 'Search verses',
                                 ),
@@ -54,10 +58,10 @@ class GitaChaptersScreen extends StatelessWidget {
                           isHindi
                               ? 'भगवान का गीत - सम्पूर्ण 18 अध्याय'
                               : 'The Song of the Lord - Complete 18 Chapters',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                          ),
+                          style: TextStyle(
+                             fontSize: 14,
+                             color: textSecondary,
+                           ),
                         ),
                     const SizedBox(height: 20),
 
@@ -88,7 +92,7 @@ class GitaChaptersScreen extends StatelessWidget {
                                 ),
                                 child: Text(
                                   isHindi ? 'गीता ज्ञान' : 'Gita Wisdom',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 11,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
@@ -98,7 +102,7 @@ class GitaChaptersScreen extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          const Text(
+                          Text(
                             '"Yoga-sthah kuru karmani\nsangam tyaktva dhananjaya\nsiddhy-asiddhyoh samo bhutva\nsamatvam yoga ucyate"',
                             style: TextStyle(
                               fontSize: 16,
@@ -163,7 +167,7 @@ class GitaChaptersScreen extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: cardColor,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: color.withOpacity(0.1),
@@ -214,11 +218,11 @@ class GitaChaptersScreen extends StatelessWidget {
                       isHindi && chapter['nameHindi'] != null
                           ? chapter['nameHindi']!
                           : chapterName,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
+                      style: TextStyle(
+                         fontSize: 15,
+                         fontWeight: FontWeight.w600,
+                         color: textPrimary,
+                       ),
                     ),
                                   ],
                                 ),

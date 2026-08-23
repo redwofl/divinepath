@@ -59,21 +59,21 @@ class AartiListScreen extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Diya icon
-                              Container(
-                                width: 48,
-                                height: 48,
-                                decoration: BoxDecoration(
-                                  gradient: AppColors.primaryGradient,
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary.withOpacity(0.3),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
+                               // Diya icon
+                               Container(
+                                 width: 48,
+                                 height: 48,
+                                 decoration: BoxDecoration(
+                                   shape: BoxShape.circle,
+                                   gradient: AppColors.primaryGradient,
+                                   boxShadow: [
+                                     BoxShadow(
+                                       color: AppColors.primary.withOpacity(0.3),
+                                       blurRadius: 12,
+                                       offset: const Offset(0, 4),
+                                     ),
+                                   ],
+                                 ),
                                 child: const Center(
                                   child: Icon(
                                     Icons.local_fire_department_rounded,
@@ -214,24 +214,31 @@ class _AartiCard extends StatelessWidget {
                     top: Radius.circular(20),
                   ),
                 ),
-                child: Center(
-                  child: Container(
-                    width: 62,
-                    height: 62,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: color.withOpacity(0.12),
-                      border: Border.all(
-                        color: color.withOpacity(0.3),
-                        width: 1.5,
+                    child: Center(
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        foregroundDecoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: color,
+                            width: 5,
+                          ),
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            aarti.icon,
+                            width: 70,
+                            height: 70,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
-                    child: Center(
-                      child: Text(aarti.icon,
-                          style: const TextStyle(fontSize: 28)),
-                    ),
-                  ),
-                ),
               ),
             ),
             // Text

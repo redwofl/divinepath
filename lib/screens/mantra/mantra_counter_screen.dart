@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/mantra_provider.dart';
 import '../../providers/tap_sound_provider.dart';
-import '../../services/ad_service.dart';
+import '../../services/admob_service.dart';
 import '../../services/audio_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
@@ -123,8 +123,8 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
   @override
   void initState() {
     super.initState();
-    // Preload the rewarded ad so the bonus button works on the first tap
-    AdService.instance.loadRewarded();
+    // Preload the AdMob rewarded ad so the bonus button works on first tap
+    AdmobService.instance.loadRewarded();
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -363,19 +363,21 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
 
   /// Show a rewarded ad and grant +1 mala of bonus chants on completion.
   ///
+  /// Uses Google AdMob (Start.io rewarded inventory was unreliable here).
   /// A single tap reliably opens exactly ONE ad: if the ad isn't loaded yet it
   /// is queued and presented automatically the moment it's ready (instead of
   /// asking the user to tap again), and [_isWatchingAd] blocks any double-tap
   /// from opening a second ad.
   Future<void> _watchAdForBonus(MantraProvider provider) async {
     final messenger = ScaffoldMessenger.of(context);
+    final admob = AdmobService.instance;
 
     if (_isWatchingAd) return; // one ad at a time
-    if (!AdService.instance.isEnabled) {
+    if (!admob.isSupported) {
       messenger.showSnackBar(
         const SnackBar(
           content: Text(
-            'Reward ads are not available in this build',
+            'Reward ads are only available in the mobile app',
             textAlign: TextAlign.center,
           ),
         ),
@@ -387,8 +389,8 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
 
     // If the ad isn't ready yet, queue it and wait for it to load, then show
     // it automatically (up to ~20s so we never wait forever).
-    if (!AdService.instance.isRewardedReady) {
-      AdService.instance.loadRewarded();
+    if (!admob.isRewardedReady) {
+      admob.loadRewarded(force: true);
       messenger.showSnackBar(
         const SnackBar(
           content: Text(
@@ -398,13 +400,14 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
         ),
       );
       final deadline = DateTime.now().add(const Duration(seconds: 20));
-      while (!AdService.instance.isRewardedReady) {
+      while (!admob.isRewardedReady) {
         if (DateTime.now().isAfter(deadline)) break;
         await Future.delayed(const Duration(milliseconds: 300));
         if (!mounted) return;
       }
-      if (!AdService.instance.isRewardedReady) {
-        if (mounted) setState(() => _isWatchingAd = false);
+      if (!mounted) return;
+      if (!admob.isRewardedReady) {
+        setState(() => _isWatchingAd = false);
         messenger.showSnackBar(
           const SnackBar(
             content: Text(
@@ -417,7 +420,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
       }
     }
 
-    final earned = await AdService.instance.showRewarded();
+    final earned = await admob.showRewarded();
     if (!mounted) return;
     setState(() => _isWatchingAd = false);
 
@@ -762,14 +765,14 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
-                            Icon(Icons.star_rounded,
+                            const Icon(Icons.star_rounded,
                                 color: AppColors.primary, size: 16),
-                            const SizedBox(width: 4),
-                            Text(
+                            SizedBox(width: 4),
+                            const Text(
                               'Favorites',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textSecondary,
@@ -1437,9 +1440,9 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
             return Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.darkSurface,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               child: Padding(
               padding: const EdgeInsets.all(24),
@@ -1449,10 +1452,10 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                 children: [
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           'Select Mantra',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -1471,7 +1474,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.star_rounded,
+                              const Icon(Icons.star_rounded,
                                   color: AppColors.primary, size: 16),
                               const SizedBox(width: 4),
                               Text(
@@ -1606,7 +1609,7 @@ class _Shockwave {
   double lifetime = 0;
   double opacity = 1.0;
 
-  _Shockwave({this.radius = 10});
+  _Shockwave() : radius = 10;
 }
 
 /// A floating score popup (+1 or Mala!) that rises from the tap button
@@ -1624,9 +1627,7 @@ class _ScorePopup {
     required this.label,
     this.isMala = false,
     this.x = 0,
-    this.yOffset = -80,
-    this.vy = -2.5,
-  });
+  }) : yOffset = -80, vy = -2.5;
 }
 
 /// Golden ring + text celebration shown when a mala (108 chants) completes
@@ -1718,7 +1719,7 @@ class _DashedCirclePainter extends CustomPainter {
     // Inset well inside the solid border so the dashes read as a distinct inner ring
     final radius = size.width / 2 - strokeWidth / 2 - 12;
     final circumference = 2 * pi * radius;
-    final segment = dashLength + gapLength;
+    const segment = dashLength + gapLength;
     final count = (circumference / segment).floor();
 
     for (int i = 0; i < count; i++) {

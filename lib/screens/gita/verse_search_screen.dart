@@ -38,6 +38,10 @@ class _VerseSearchScreenState extends State<VerseSearchScreen> {
     final isHindi = context.watch<LocaleProvider>().isHindi;
     final locCode = context.watch<LocaleProvider>().localeCode;
     final query = _controller.text.trim();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
+    final cardColor = isDark ? AppColors.darkSurface : Colors.white;
 
     return Scaffold(
       appBar: AppBar(
@@ -73,7 +77,7 @@ class _VerseSearchScreenState extends State<VerseSearchScreen> {
                         },
                       ),
                 filled: true,
-                fillColor: AppColors.textPrimary.withOpacity(0.05),
+                fillColor: isDark ? AppColors.darkCard.withOpacity(0.05) : AppColors.textPrimary.withOpacity(0.05),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide.none,
@@ -84,20 +88,20 @@ class _VerseSearchScreenState extends State<VerseSearchScreen> {
           ),
         ),
       ),
-      body: _buildBody(context, locCode, isHindi, query),
+      body: _buildBody(context, locCode, isHindi, query, isDark, textPrimary, textSecondary, cardColor),
     );
   }
 
   Widget _buildBody(
-      BuildContext context, String locCode, bool isHindi, String query) {
+      BuildContext context, String locCode, bool isHindi, String query, bool isDark, Color textPrimary, Color textSecondary, Color cardColor) {
     // Initial state: prompt the user to type something.
     if (!_searched || query.isEmpty) {
-      return _buildInitialState(context, locCode, isHindi);
+      return _buildInitialState(context, locCode, isHindi, isDark, textPrimary, textSecondary, cardColor);
     }
 
     // No matches.
     if (_results.isEmpty) {
-      return _buildEmptyState(context, locCode, query);
+      return _buildEmptyState(context, locCode, query, isDark, textPrimary, textSecondary);
     }
 
     return ListView.builder(
@@ -110,9 +114,9 @@ class _VerseSearchScreenState extends State<VerseSearchScreen> {
             child: Text(
               Translations.t('results_count',
                   locale: locCode, params: {'count': '${_results.length}'}),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                color: textSecondary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -124,7 +128,7 @@ class _VerseSearchScreenState extends State<VerseSearchScreen> {
     );
   }
 
-  Widget _buildInitialState(BuildContext context, String locCode, bool isHindi) {
+  Widget _buildInitialState(BuildContext context, String locCode, bool isHindi, bool isDark, Color textPrimary, Color textSecondary, Color cardColor) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -155,7 +159,7 @@ class _VerseSearchScreenState extends State<VerseSearchScreen> {
               style: TextStyle(
                 fontSize: 15,
                 height: 1.5,
-                color: AppColors.textSecondary,
+                color: textSecondary,
                 fontFamily: isHindi ? 'Mukta' : null,
               ),
             ),
@@ -185,7 +189,7 @@ class _VerseSearchScreenState extends State<VerseSearchScreen> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, String locCode, String query) {
+  Widget _buildEmptyState(BuildContext context, String locCode, String query, bool isDark, Color textPrimary, Color textSecondary) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -197,19 +201,19 @@ class _VerseSearchScreenState extends State<VerseSearchScreen> {
             const SizedBox(height: 14),
             Text(
               Translations.get('no_results', locale: locCode),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: textPrimary,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               '"$query"',
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: AppColors.textSecondary,
+                color: textSecondary,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -228,6 +232,10 @@ class _VerseResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
+    final cardColor = isDark ? AppColors.darkSurface : Colors.white;
     final chapterName = _chapterName(result.chapterNumber);
     final translation = isHindi && result.translationHindi.isNotEmpty
         ? result.translationHindi
@@ -239,7 +247,7 @@ class _VerseResultCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -295,7 +303,7 @@ class _VerseResultCard extends StatelessWidget {
                     fontSize: 14,
                     height: 1.6,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
+                    color: textPrimary,
                     fontFamily: isHindi ? 'Mukta' : null,
                   ),
                 ),
@@ -308,7 +316,7 @@ class _VerseResultCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.4,
-                      color: AppColors.textSecondary,
+                      color: textSecondary,
                       fontFamily: isHindi ? 'Mukta' : null,
                     ),
                   ),

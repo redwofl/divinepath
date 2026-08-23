@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/mantra_provider.dart';
+import '../../screens/game/bubble_game_screen.dart' show bubbleGameTabPaused;
 import '../../theme/app_theme.dart';
 import '../../utils/translations.dart';
 
@@ -94,6 +95,10 @@ class _MainNavScreenState extends State<MainNavScreen> {
     if (index != 1) {
       context.read<MantraProvider>().stopAutoMode();
     }
+    // Freeze/unfreeze a running bubble-game round when leaving/entering the
+    // Game tab — the screen stays alive inside the IndexedStack shell, so it
+    // would otherwise keep animating and playing music in the background.
+    bubbleGameTabPaused.value = index != 2;
     widget.navigationShell.goBranch(
       index,
       initialLocation: index == widget.navigationShell.currentIndex,

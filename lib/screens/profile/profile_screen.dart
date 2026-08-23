@@ -28,6 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final themeProvider = context.watch<ThemeProvider>();
     final user = userProvider.user;
     final locCode = localeProvider.localeCode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: SafeArea(
@@ -41,10 +42,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   Text(
                     Translations.get('profile', locale: locCode),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                     ),
                   ),
                   Row(
@@ -56,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: AppColors.secondary,
+                            color: isDark ? AppColors.darkCard : AppColors.secondary,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(Icons.edit_rounded,
@@ -69,11 +70,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: AppColors.secondary,
+                            color: isDark ? AppColors.darkCard : AppColors.secondary,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.settings_rounded,
-                              color: AppColors.textPrimary, size: 20),
+                          child: Icon(Icons.settings_rounded,
+                              color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
+                              size: 20),
                         ),
                       ),
                     ],
@@ -231,11 +233,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildMenuItem(
                 Icons.language_rounded,
                 Translations.get('language', locale: locCode),
-                localeProvider.isSanskrit
-                    ? Translations.get('sanskrit', locale: locCode)
-                    : localeProvider.isHindi
-                        ? Translations.get('hindi', locale: locCode)
-                        : Translations.get('english', locale: locCode),
+                localeProvider.isHindi
+                    ? Translations.get('hindi', locale: locCode)
+                    : Translations.get('english', locale: locCode),
                 () => _showLanguagePicker(context, localeProvider),
               ),
 
@@ -258,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.secondary,
+                  color: isDark ? AppColors.darkCard : AppColors.secondary,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: AppColors.textLight.withOpacity(0.1),
@@ -270,18 +270,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 8),
                     Text(
                       Translations.get('appName', locale: locCode),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       Translations.get('appTagline', locale: locCode),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: isDark ? AppColors.textLight : AppColors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -304,11 +304,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildStatCard(String emoji, String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkCard : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: AppColors.textLight.withOpacity(0.1),
@@ -320,17 +321,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 8),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
               ),
             ),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: AppColors.textSecondary,
+                color: isDark ? AppColors.textLight : AppColors.textSecondary,
               ),
             ),
           ],
@@ -340,6 +341,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildMenuItem(IconData icon, String title, String subtitle, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: ListTile(
@@ -348,24 +350,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: AppColors.secondary,
+            color: isDark ? AppColors.darkCard : AppColors.secondary,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: AppColors.textPrimary, size: 20),
+          child: Icon(icon,
+              color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
+              size: 20),
         ),
         title: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: AppColors.textPrimary,
+            color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
           ),
         ),
         subtitle: Text(
           subtitle,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: AppColors.textSecondary,
+            color: isDark ? AppColors.textLight : AppColors.textSecondary,
           ),
         ),
         trailing: const Icon(Icons.chevron_right_rounded,
@@ -387,6 +391,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
         // Use the sheet's own context (ctx) so the sheet rises above the
         // keyboard and the name field is never hidden while typing.
         return Padding(
@@ -402,35 +407,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Text(
                 Translations.get('edit_profile', locale: locCode),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 20),
               TextField(
                 controller: nameController,
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
+                style: TextStyle(
+                  color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                   fontSize: 15,
                 ),
                 cursorColor: AppColors.primary,
                 decoration: InputDecoration(
                   labelText: Translations.get('name', locale: locCode),
-                  labelStyle: const TextStyle(
-                    color: AppColors.textSecondary,
+                  labelStyle: TextStyle(
+                    color: isDark ? AppColors.textLight : AppColors.textSecondary,
                     fontSize: 14,
                   ),
                   hintText: Translations.get('enter_name', locale: locCode),
-                  hintStyle: const TextStyle(
+                  hintStyle: TextStyle(
                     color: AppColors.textLight,
                     fontSize: 14,
                   ),
-                  prefixIcon: const Icon(Icons.person_outline_rounded,
-                      color: AppColors.textSecondary),
+                  prefixIcon: Icon(Icons.person_outline_rounded,
+                      color: isDark ? AppColors.textLight : AppColors.textSecondary),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: isDark ? AppColors.darkCard : Colors.white,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
@@ -462,6 +467,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
         return Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -470,10 +476,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Text(
                 Translations.get('select_language', locale: localeProvider.localeCode),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 16),
@@ -490,16 +496,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary.withOpacity(0.1)
-                          : AppColors.secondary,
+                          : isDark
+                              ? AppColors.darkCard
+                              : AppColors.secondary,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
                       child: Text(
                         lang['code'] == 'en'
                             ? 'EN'
-                            : lang['code'] == 'sa'
-                                ? 'सं'
-                                : 'हि',
+                            : 'हि',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -512,14 +518,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     lang['native']!,
                     style: TextStyle(
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                      color: isSelected ? AppColors.primary : (isDark ? AppColors.textOnDark : AppColors.textPrimary),
                     ),
                   ),
                   subtitle: Text(
                     lang['name']!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: isDark ? AppColors.textLight : AppColors.textSecondary,
                     ),
                   ),
                   trailing: isSelected
@@ -612,6 +618,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
     final locCode = widget.locCode;
     final themeProvider = widget.themeProvider;
     final tapProvider = context.read<TapSoundProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -621,10 +628,10 @@ class _SettingsSheetState extends State<_SettingsSheet> {
         children: [
           Text(
             Translations.get('settings', locale: locCode),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 20),
@@ -676,10 +683,10 @@ class _SettingsSheetState extends State<_SettingsSheet> {
               padding: const EdgeInsets.only(left: 16, bottom: 8),
               child: Text(
                 Translations.get('tap_sound', locale: locCode),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textSecondary,
+                  color: isDark ? AppColors.textLight : AppColors.textSecondary,
                 ),
               ),
             ),
@@ -700,7 +707,9 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                         decoration: BoxDecoration(
                           color: isSelected
                               ? AppColors.primary.withOpacity(0.1)
-                              : AppColors.secondary,
+                              : isDark
+                                  ? AppColors.darkCard
+                                  : AppColors.secondary,
                           borderRadius: BorderRadius.circular(12),
                           border: isSelected
                               ? Border.all(
@@ -727,7 +736,9 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                                     : FontWeight.normal,
                                 color: isSelected
                                     ? AppColors.primary
-                                    : AppColors.textPrimary,
+                                    : isDark
+                                        ? AppColors.textOnDark
+                                        : AppColors.textPrimary,
                               ),
                             ),
                           ],

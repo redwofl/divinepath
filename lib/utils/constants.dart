@@ -80,15 +80,14 @@ class AppConstants {
     {'code': 'hi', 'name': 'Hindi', 'native': 'हिन्दी'},
     {'code': 'mr', 'name': 'Marathi', 'native': 'मराठी'},
     {'code': 'gu', 'name': 'Gujarati', 'native': 'ગુજરાતી'},
-    {'code': 'sa', 'name': 'Sanskrit', 'native': 'संस्कृतम्'},
   ];
 
   // Spiritual Interests
   static const List<Map<String, dynamic>> spiritualInterests = [
     {'name': 'Krishna', 'icon': '🦚', 'color': Color(0xFF2563EB)},
-    {'name': 'Shiva', 'icon': '🔱', 'color': Color(0xFF7C3AED)},
+    {'name': 'Shiva', 'icon': '🔱', 'image': 'assets/images/deities/shiv_icon.png', 'color': Color(0xFF7C3AED)},
     {'name': 'Rama', 'icon': '🏹', 'color': Color(0xFF059669)},
-    {'name': 'Hanuman', 'icon': '🐵', 'color': Color(0xFFD97706)},
+    {'name': 'Hanuman', 'icon': '🐵', 'image': 'assets/images/deities/hanuman-icon.png', 'color': Color(0xFFD97706)},
     {'name': 'Devi', 'icon': '🌸', 'color': Color(0xFFDB2777)},
     {'name': 'Meditation', 'icon': '🧘', 'color': Color(0xFF6366F1)},
     {'name': 'Bhagavad Gita', 'icon': '📖', 'color': Color(0xFFF59E0B)},
@@ -199,10 +198,10 @@ class AppConstants {
     {'name': 'Ramayan', 'icon': '🏹', 'color': Color(0xFF059669), 'count': 25},
     {'name': 'Mahabharat', 'icon': '⚔️', 'color': Color(0xFFD97706), 'count': 30},
     {'name': 'Bhagavad Gita', 'icon': '📖', 'color': Color(0xFFF59E0B), 'count': 18},
-    {'name': 'Krishna Leela', 'icon': '🦚', 'color': Color(0xFF2563EB), 'count': 20},
-    {'name': 'Shiv Puran', 'icon': '🔱', 'color': Color(0xFF7C3AED), 'count': 15},
-    {'name': 'Hanuman Stories', 'icon': '🐵', 'color': Color(0xFFDC2626), 'count': 12},
-    {'name': 'Devi Stories', 'icon': '🌸', 'color': Color(0xFFDB2777), 'count': 18},
+    {'name': 'Krishna Leela', 'icon': '🦚', 'image': 'assets/images/deities/krishna_icon.png', 'color': Color(0xFF2563EB), 'count': 20},
+    {'name': 'Shiv Puran', 'icon': '🔱', 'image': 'assets/images/deities/shiv_icon.png', 'color': Color(0xFF7C3AED), 'count': 15},
+    {'name': 'Hanuman Stories', 'icon': '🐵', 'image': 'assets/images/deities/hanuman-icon.png', 'color': Color(0xFFDC2626), 'count': 12},
+    {'name': 'Devi Stories', 'icon': '🌸', 'image': 'assets/images/deities/durga_icon.png', 'color': Color(0xFFDB2777), 'count': 18},
     {'name': 'Saints & Sages', 'icon': '✨', 'color': Color(0xFF6366F1), 'count': 15},
   ];
 

@@ -51,3 +51,21 @@ lib/config/app_config.dart
 
 # Sound WAV originals (regenerable via tool/generate_meditation_sounds.py)
 tool/sounds_wav_backup/
+
+# Build outputs & local tooling
+android/build/
+temp_anr.txt/
+*.code-workspace
+/chat_error.png
+/clean0.png
+/cur.png
+/lang_state.png
+/n1.png
+/n2.png
+/n3.png
+/n4.png
+/new logo.png
+/p1.png
+/s107.png
+/s108.png
+/screen.png

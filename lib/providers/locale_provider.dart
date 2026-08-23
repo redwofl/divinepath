@@ -13,7 +13,10 @@ class LocaleProvider extends ChangeNotifier {
   /// Initialize locale from SharedPreferences
   Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedCode = prefs.getString(_localeKey) ?? 'en';
+    var savedCode = prefs.getString(_localeKey) ?? 'en';
+    if (!supportedCodes.contains(savedCode)) {
+      savedCode = 'en';
+    }
     _locale = Locale(savedCode);
     notifyListeners();
   }
@@ -31,7 +34,7 @@ class LocaleProvider extends ChangeNotifier {
   }
   
   /// All supported language codes in order
-  static const List<String> supportedCodes = ['en', 'hi', 'mr', 'gu', 'sa'];
+  static const List<String> supportedCodes = ['en', 'hi', 'mr', 'gu'];
   
   /// Get the native display name for current locale
   String get nativeName => Translations.getNativeName(_locale.languageCode);
@@ -41,10 +44,7 @@ class LocaleProvider extends ChangeNotifier {
   
   /// Check if current locale is Hindi
   bool get isHindi => _locale.languageCode == 'hi';
-  
-  /// Check if current locale is Sanskrit
-  bool get isSanskrit => _locale.languageCode == 'sa';
-  
+
   /// Check if current locale is Marathi
   bool get isMarathi => _locale.languageCode == 'mr';
   

@@ -82,10 +82,15 @@ class SuggestedQuestion {
   final String category;
   final String? icon;
 
+  /// Key into Translations for the localized question text. Falls back to
+  /// [question] (English) when the key is missing.
+  final String translationKey;
+
   const SuggestedQuestion({
     required this.question,
     required this.category,
     this.icon,
+    this.translationKey = '',
   });
 
   static const List<SuggestedQuestion> spiritualQuestions = [
@@ -93,51 +98,61 @@ class SuggestedQuestion {
       question: 'What is the purpose of life according to Bhagavad Gita?',
       category: 'Philosophy',
       icon: '🕉️',
+      translationKey: 'chat_suggestion_1',
     ),
     SuggestedQuestion(
       question: 'How can I find inner peace?',
       category: 'Meditation',
       icon: '🧘',
+      translationKey: 'chat_suggestion_2',
     ),
     SuggestedQuestion(
       question: 'How to deal with anxiety and stress?',
       category: 'Wellness',
       icon: '💆',
+      translationKey: 'chat_suggestion_3',
     ),
     SuggestedQuestion(
       question: 'What is the meaning of karma?',
       category: 'Philosophy',
       icon: '🔄',
+      translationKey: 'chat_suggestion_4',
     ),
     SuggestedQuestion(
       question: 'How to practice mindfulness daily?',
       category: 'Meditation',
       icon: '🎯',
+      translationKey: 'chat_suggestion_5',
     ),
     SuggestedQuestion(
       question: 'What does Gita say about success?',
       category: 'Bhagavad Gita',
       icon: '📖',
+      translationKey: 'chat_suggestion_6',
     ),
     SuggestedQuestion(
       question: 'How to develop a meditation habit?',
       category: 'Meditation',
       icon: '⏰',
+      translationKey: 'chat_suggestion_7',
     ),
     SuggestedQuestion(
       question: 'What is the power of mantra chanting?',
       category: 'Mantra',
       icon: '🔮',
+      translationKey: 'chat_suggestion_8',
     ),
     SuggestedQuestion(
       question: 'How to overcome fear and doubt?',
       category: 'Motivation',
       icon: '💪',
+      translationKey: 'chat_suggestion_9',
     ),
     SuggestedQuestion(
       question: 'What is dharma and how to follow it?',
       category: 'Philosophy',
       icon: '⚖️',
+      translationKey: 'chat_suggestion_10',
     ),
   ];
 }

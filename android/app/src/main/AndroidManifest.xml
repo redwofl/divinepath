@@ -39,6 +39,11 @@
             android:name="com.startapp.sdk.APPLICATION_ID"
             android:value="207265983" />
 
+        <!-- Google AdMob App ID (mandatory for google_mobile_ads; rewarded ads) -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3333666454328224~4248449307"/>
+
         <!-- flutter_local_notifications receivers (needed for scheduled daily reminders) -->
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">

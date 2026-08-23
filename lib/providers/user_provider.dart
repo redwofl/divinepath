@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
@@ -6,6 +7,7 @@ import '../models/user_model.dart';
 /// Automatically creates a default local user on initialization.
 class UserProvider extends ChangeNotifier {
   static const _onboardingKey = 'has_completed_onboarding';
+  static const _profileKey = 'user_profile';
 
   UserModel? _user;
   bool _isInitialized = false;
@@ -23,7 +25,18 @@ class UserProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _hasCompletedOnboarding = prefs.getBool(_onboardingKey) ?? false;
 
-    _user = UserModel(
+    // Load saved profile so name/preferences survive restarts.
+    final savedProfile = prefs.getString(_profileKey);
+    if (savedProfile != null && savedProfile.isNotEmpty) {
+      try {
+        final map = jsonDecode(savedProfile) as Map<String, dynamic>;
+        _user = UserModel.fromMap(map, 'local_user');
+      } catch (e) {
+        debugPrint('UserProvider: Failed to load saved profile: $e');
+      }
+    }
+
+    _user ??= UserModel(
       uid: 'local_user',
       email: 'user@local.app',
       name: 'Seeker',
@@ -32,6 +45,13 @@ class UserProvider extends ChangeNotifier {
     _isInitialized = true;
     debugPrint('UserProvider: Local user initialized');
     notifyListeners();
+  }
+
+  /// Persist the current user profile to SharedPreferences.
+  Future<void> _saveToLocal() async {
+    if (_user == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_profileKey, jsonEncode(_user!.toMap()));
   }
 
   /// Mark onboarding as completed and persist the flag
@@ -49,6 +69,7 @@ class UserProvider extends ChangeNotifier {
       _user = _user!.copyWith(name: name, photoUrl: photoUrl);
       notifyListeners();
     }
+    await _saveToLocal();
   }
 
   /// Update onboarding preferences and mark onboarding as completed
@@ -70,6 +91,7 @@ class UserProvider extends ChangeNotifier {
     );
 
     await markOnboardingComplete();
+    await _saveToLocal();
     debugPrint('UserProvider: Onboarding saved locally');
   }
 }

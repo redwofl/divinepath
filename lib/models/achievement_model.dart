@@ -49,7 +49,7 @@ class Achievement {
   }
 
   static final List<Achievement> defaultAchievements = [
-    Achievement(
+    const Achievement(
       id: 'first_chant',
       title: 'First Chant',
       description: 'Complete your first mantra chant',
@@ -59,7 +59,7 @@ class Achievement {
       xpReward: 10,
       coinReward: 5,
     ),
-    Achievement(
+    const Achievement(
       id: 'first_mala',
       title: 'First Mala',
       description: 'Complete one full mala (108 chants)',
@@ -69,7 +69,7 @@ class Achievement {
       xpReward: 50,
       coinReward: 20,
     ),
-    Achievement(
+    const Achievement(
       id: 'streak_7',
       title: 'Weekly Warrior',
       description: 'Maintain a 7-day streak',
@@ -79,7 +79,7 @@ class Achievement {
       xpReward: 100,
       coinReward: 50,
     ),
-    Achievement(
+    const Achievement(
       id: 'streak_30',
       title: 'Monthly Master',
       description: 'Maintain a 30-day streak',
@@ -89,7 +89,7 @@ class Achievement {
       xpReward: 500,
       coinReward: 200,
     ),
-    Achievement(
+    const Achievement(
       id: 'streak_100',
       title: 'Century Streak',
       description: 'Maintain a 100-day streak',
@@ -99,7 +99,7 @@ class Achievement {
       xpReward: 1000,
       coinReward: 500,
     ),
-    Achievement(
+    const Achievement(
       id: 'meditation_10',
       title: 'Meditation Beginner',
       description: 'Meditate for 10 minutes total',
@@ -109,7 +109,7 @@ class Achievement {
       xpReward: 50,
       coinReward: 20,
     ),
-    Achievement(
+    const Achievement(
       id: 'meditation_100',
       title: 'Meditation Seeker',
       description: 'Meditate for 100 minutes total',
@@ -119,7 +119,7 @@ class Achievement {
       xpReward: 200,
       coinReward: 100,
     ),
-    Achievement(
+    const Achievement(
       id: 'story_5',
       title: 'Story Lover',
       description: 'Read 5 sacred stories',
@@ -129,7 +129,7 @@ class Achievement {
       xpReward: 50,
       coinReward: 20,
     ),
-    Achievement(
+    const Achievement(
       id: 'gita_10',
       title: 'Gita Scholar',
       description: 'Read 10 Gita verses',
@@ -139,7 +139,7 @@ class Achievement {
       xpReward: 100,
       coinReward: 50,
     ),
-    Achievement(
+    const Achievement(
       id: 'challenge_5',
       title: 'Challenge Taker',
       description: 'Complete 5 daily challenges',
@@ -149,7 +149,7 @@ class Achievement {
       xpReward: 100,
       coinReward: 50,
     ),
-    Achievement(
+    const Achievement(
       id: 'chants_1000',
       title: 'Chant Master',
       description: 'Complete 1000 total chants',
@@ -159,7 +159,7 @@ class Achievement {
       xpReward: 500,
       coinReward: 200,
     ),
-    Achievement(
+    const Achievement(
       id: 'chants_10000',
       title: 'Mantra Sage',
       description: 'Complete 10,000 total chants',

@@ -37,14 +37,14 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
   String get _commentaryHindi => _verse![5];
 
   /// Graceful fallback shown when this verse isn't in the local dataset yet.
-  Widget _buildMissingContent(BuildContext context, bool isHindi) {
+  Widget _buildMissingContent(BuildContext context, bool isHindi, bool isDark, Color textPrimaryColor, Color textSecondaryColor) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           isHindi
               ? 'अध्याय ${widget.chapterNumber}, श्लोक ${widget.verseNumber}'
               : 'Chapter ${widget.chapterNumber}, Verse ${widget.verseNumber}',
-          style: const TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16),
         ),
         actions: const [
           LanguageSwitcherButton(),
@@ -60,7 +60,7 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                color: AppColors.secondary,
+                color: isDark ? AppColors.darkSurface : AppColors.secondary,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: AppColors.primary.withOpacity(0.15),
@@ -75,10 +75,10 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
                         ? 'इस श्लोक की सामग्री जल्द ही जोड़ी जाएगी'
                         : 'This verse\'s content is coming soon',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: textPrimaryColor,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -87,9 +87,9 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
                         ? 'अध्याय ${widget.chapterNumber}, श्लोक ${widget.verseNumber} — कृपया दूसरे श्लोक देखें 🙏'
                         : 'Chapter ${widget.chapterNumber}, Verse ${widget.verseNumber} — please explore other verses 🙏',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
+                      color: textSecondaryColor,
                       height: 1.5,
                     ),
                   ),
@@ -132,17 +132,21 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
   Widget build(BuildContext context) {
     final isHindi = context.watch<LocaleProvider>().isHindi;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimaryColor = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondaryColor = isDark ? AppColors.textLight : AppColors.textSecondary;
     final verse = _verse;
     if (verse == null) {
-      return _buildMissingContent(context, isHindi);
+      return _buildMissingContent(context, isHindi, isDark, textPrimaryColor, textSecondaryColor);
     }
+    final surfaceColor = isDark ? AppColors.darkCard : Colors.white;
+    final borderColor = isDark ? AppColors.primary.withOpacity(0.3) : AppColors.textLight.withOpacity(0.1);
     return Scaffold(
       appBar: AppBar(
         title: Text(
           isHindi
               ? 'अध्याय ${widget.chapterNumber}, श्लोक ${widget.verseNumber}'
               : 'Chapter ${widget.chapterNumber}, Verse ${widget.verseNumber}',
-          style: const TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16),
         ),
         actions: [
           const LanguageSwitcherButton(),
@@ -173,7 +177,7 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
           IconButton(
             icon: Icon(
               _showTranslation ? Icons.translate_rounded : Icons.text_fields_rounded,
-              color: AppColors.textSecondary,
+              color: textSecondaryColor,
             ),
             onPressed: () => setState(() => _showTranslation = !_showTranslation),
           ),
@@ -198,8 +202,11 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
               child: SelectableText(
                 _shloka,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
+                  // The shloka card keeps its cream background in both
+                  // themes, so the text must stay dark — the theme-aware
+                  // color turned near-white in dark mode and vanished.
                   color: AppColors.textPrimary,
                   height: 1.8,
                   fontFamily: 'Mukta',
@@ -213,17 +220,17 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: surfaceColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.textLight.withOpacity(0.1),
+                  color: borderColor,
                 ),
               ),
               child: SelectableText(
                 _transliteration,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
-                  color: AppColors.textSecondary,
+                  color: textSecondaryColor,
                   fontStyle: FontStyle.italic,
                   height: 1.6,
                 ),
@@ -234,10 +241,10 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
             // Translation tabs
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: surfaceColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.textLight.withOpacity(0.1),
+                  color: borderColor,
                 ),
               ),
               child: Column(
@@ -269,7 +276,7 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
                           isHindi ? _translationHindi : _translationEnglish,
                           style: TextStyle(
                             fontSize: 16,
-                            color: AppColors.textPrimary,
+                            color: textPrimaryColor,
                             height: 1.6,
                             fontFamily: isHindi ? 'Mukta' : null,
                           ),
@@ -293,21 +300,21 @@ class _VerseDetailScreenState extends State<VerseDetailScreen> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
+                                color: textPrimaryColor,
                                 fontFamily: isHindi ? null : 'Mukta',
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        SelectableText(
-                          isHindi ? _translationEnglish : _translationHindi,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: AppColors.textPrimary,
-                            height: 1.6,
-                            fontFamily: isHindi ? null : 'Mukta',
-                          ),
+                          SelectableText(
+                            isHindi ? _translationEnglish : _translationHindi,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: textPrimaryColor,
+                              height: 1.6,
+                              fontFamily: isHindi ? null : 'Mukta',
+                            ),
                         ),
                       ],
                     ),

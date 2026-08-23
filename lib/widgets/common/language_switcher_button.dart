@@ -163,10 +163,10 @@ void _showLanguagePicker(BuildContext context, LocaleProvider localeProvider) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: GestureDetector(
-                          onTap: () {
-                            localeProvider.setLocale(code);
+                          onTap: () async {
+                            await localeProvider.setLocale(code);
                             textController.dispose();
-                            Navigator.pop(context);
+                            if (context.mounted) Navigator.pop(context);
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),

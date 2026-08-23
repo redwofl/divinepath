@@ -16,8 +16,8 @@ class MantraProvider extends ChangeNotifier {
   bool _autoMode = false;
   int _selectedMantraIndex = 0;
   int _dailyCount = 0;
-  int _weeklyCount = 0;
-  int _monthlyCount = 0;
+  final int _weeklyCount = 0;
+  final int _monthlyCount = 0;
   int _totalCount = 0;
   int _totalMalas = 0;
   bool _isSessionTimerRunning = false;
@@ -28,7 +28,7 @@ class MantraProvider extends ChangeNotifier {
   // Mantra lists
   List<MantraModel> _mantras = [];
   List<MantraSession> _recentSessions = [];
-  Map<String, int> _dailyHistory = {};
+  final Map<String, int> _dailyHistory = {};
 
   // Favorites
   Set<int> _favoriteIndices = {};

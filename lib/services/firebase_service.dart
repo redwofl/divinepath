@@ -112,13 +112,13 @@ class FirebaseService {
   /// Sign in with email and password
   Future<UserCredential> signInWithEmail(String email, String password) {
     _checkAvailable();
-    return _auth!.signInWithEmailAndPassword(email: email, password: password);
+    return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   /// Register with email and password
   Future<UserCredential> registerWithEmail(String email, String password) {
     _checkAvailable();
-    return _auth!.createUserWithEmailAndPassword(email: email, password: password);
+    return _auth.createUserWithEmailAndPassword(email: email, password: password);
   }
 
   /// Sign in with Google
@@ -146,25 +146,25 @@ class FirebaseService {
   /// Sign in as guest
   Future<UserCredential> signInAsGuest() {
     _checkAvailable();
-    return _auth!.signInAnonymously();
+    return _auth.signInAnonymously();
   }
 
   /// Sign out
   Future<void> signOut() async {
     _checkAvailable();
     if (_googleSignIn != null) await _googleSignIn!.signOut();
-    await _auth!.signOut();
+    await _auth.signOut();
   }
 
   /// Send password reset email
   Future<void> sendPasswordResetEmail(String email) {
     _checkAvailable();
-    return _auth!.sendPasswordResetEmail(email: email);
+    return _auth.sendPasswordResetEmail(email: email);
   }
 
   /// Update user profile
   Future<void> updateProfile({String? displayName, String? photoURL}) async {
-    final user = _auth?.currentUser;
+    final user = _auth.currentUser;
     if (user != null) {
       await user.updateDisplayName(displayName);
       await user.updatePhotoURL(photoURL);
@@ -174,10 +174,10 @@ class FirebaseService {
   /// Delete user account
   Future<void> deleteAccount() async {
     _checkAvailable();
-    final user = _auth!.currentUser;
+    final user = _auth.currentUser;
     if (user != null) {
       // Delete user data from Firestore
-      await _firestore!.collection('users').doc(user.uid).delete();
+      await _firestore.collection('users').doc(user.uid).delete();
       await user.delete();
     }
   }
@@ -187,25 +187,25 @@ class FirebaseService {
   /// Get user document reference
   DocumentReference getUserRef(String uid) {
     _checkAvailable();
-    return _firestore!.collection('users').doc(uid);
+    return _firestore.collection('users').doc(uid);
   }
 
   /// Get user data from Firestore
   Future<DocumentSnapshot> getUserData(String uid) {
     _checkAvailable();
-    return _firestore!.collection('users').doc(uid).get();
+    return _firestore.collection('users').doc(uid).get();
   }
 
   /// Create/update user data in Firestore
   Future<void> setUserData(String uid, Map<String, dynamic> data) {
     _checkAvailable();
-    return _firestore!.collection('users').doc(uid).set(data, SetOptions(merge: true));
+    return _firestore.collection('users').doc(uid).set(data, SetOptions(merge: true));
   }
 
   /// Check if user exists
   Future<bool> userExists(String uid) async {
     _checkAvailable();
-    final doc = await _firestore!.collection('users').doc(uid).get();
+    final doc = await _firestore.collection('users').doc(uid).get();
     return doc.exists;
   }
 
@@ -214,36 +214,36 @@ class FirebaseService {
   /// Get a collection reference
   CollectionReference getCollection(String path) {
     _checkAvailable();
-    return _firestore!.collection(path);
+    return _firestore.collection(path);
   }
 
   /// Get a document reference
   DocumentReference getDocument(String collectionPath, String docId) {
     _checkAvailable();
-    return _firestore!.collection(collectionPath).doc(docId);
+    return _firestore.collection(collectionPath).doc(docId);
   }
 
   /// Add a document to a collection
   Future<DocumentReference> addDocument(String collectionPath, Map<String, dynamic> data) {
     _checkAvailable();
-    return _firestore!.collection(collectionPath).add(data);
+    return _firestore.collection(collectionPath).add(data);
   }
 
   /// Update a document
   Future<void> updateDocument(String collectionPath, String docId, Map<String, dynamic> data) {
     _checkAvailable();
-    return _firestore!.collection(collectionPath).doc(docId).update(data);
+    return _firestore.collection(collectionPath).doc(docId).update(data);
   }
 
   /// Delete a document
   Future<void> deleteDocument(String collectionPath, String docId) {
     _checkAvailable();
-    return _firestore!.collection(collectionPath).doc(docId).delete();
+    return _firestore.collection(collectionPath).doc(docId).delete();
   }
 
   /// Query collection with conditions
   Query queryCollection(String collectionPath) {
     _checkAvailable();
-    return _firestore!.collection(collectionPath);
+    return _firestore.collection(collectionPath);
   }
 }

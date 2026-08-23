@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/stories_provider.dart';
 import '../../models/story_model.dart';
-import '../../services/ad_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
 import '../../utils/translations.dart';
@@ -40,8 +39,6 @@ class _StoriesListScreenState extends State<StoriesListScreen>
   @override
   void initState() {
     super.initState();
-    // Preload the interstitial so it's ready when a story is opened
-    AdService.instance.loadInterstitial();
     _staggerController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -102,12 +99,8 @@ class _StoriesListScreenState extends State<StoriesListScreen>
     });
   }
 
-  /// Open a story detail — shows the (frequency-capped) interstitial first.
-  /// Navigation happens after the ad is dismissed so the user lands on the
-  /// story cleanly.
-  Future<void> _openStory(dynamic story) async {
-    await AdService.instance.showInterstitial();
-    if (!mounted) return;
+  /// Open a story detail. (Ads removed from Stories by design.)
+  void _openStory(dynamic story) {
     context.push('/stories/${story.id}');
   }
 
@@ -120,8 +113,49 @@ class _StoriesListScreenState extends State<StoriesListScreen>
     return match['color'] as Color;
   }
 
-  /// Get category icon for a story
+  /// Build a category icon widget (image asset when available, else emoji).
+  Widget _buildCategoryIcon(String icon, Color color, {double size = 40}) {
+    if (icon.startsWith('assets/')) {
+      return ClipOval(
+        child: Image.asset(
+          icon,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withOpacity(0.15),
+        border: Border.all(
+          color: color.withOpacity(0.4),
+          width: 2,
+        ),
+      ),
+      child: Center(
+        // Half the circle's diameter so the glyph always sits fully inside —
+        // emojis at 0.7x spilled past the ring on Ramayan/Mahabharat/Gita/
+        // Saints cards.
+        child: Text(icon, style: TextStyle(fontSize: size * 0.5)),
+      ),
+    );
+  }
+
+  /// Get category icon for a story (image asset path or emoji).
   String _getCategoryIcon(String category) {
+    final match = AppConstants.storyCategories.firstWhere(
+      (c) => c['name'] == category,
+      orElse: () => {'icon': '📖'},
+    );
+    return match['image'] as String? ?? (match['icon'] as String);
+  }
+
+  /// Get category icon for a story, preferring the emoji (for chips/labels).
+  String _getCategoryEmoji(String category) {
     final match = AppConstants.storyCategories.firstWhere(
       (c) => c['name'] == category,
       orElse: () => {'icon': '📖'},
@@ -394,14 +428,6 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                 hasScrollBody: false,
                 child: _buildEmptyState(provider),
               ),
-
-            // ========== BANNER AD ==========
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20, 4, 20, 20),
-                child: AdBannerWidget(),
-              ),
-            ),
           ],
         ),
       ),
@@ -468,8 +494,8 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
+                        shape: BoxShape.circle,
                         gradient: AppColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.primary.withOpacity(0.3),
@@ -702,6 +728,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
 
   Widget _buildFeaturedCarousel(List stories) {
     final locCode = context.read<LocaleProvider>().localeCode;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     final carouselCount = stories.length.clamp(1, _carouselStoryCount);
 
     // Start auto-scroll timer when carousel is built
@@ -727,10 +754,10 @@ class _StoriesListScreenState extends State<StoriesListScreen>
               const SizedBox(width: 10),
               Text(
                 Translations.get('featured_stories', locale: locCode),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: onSurface,
                 ),
               ),
               const Spacer(),
@@ -808,6 +835,12 @@ class _StoriesListScreenState extends State<StoriesListScreen>
   Widget _buildCarouselSlide(story, bool isActive) {
     final color = _getCategoryColor(story.category);
     final icon = _getCategoryIcon(story.category);
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    // In dark mode the page background is nearly black; use the lighter
+    // darkSurface so cards stay visually elevated. Light mode keeps white.
+    final cardBase = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.darkSurface
+        : Colors.white;
 
     return GestureDetector(
       onTap: () => _openStory(story),
@@ -823,7 +856,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
             colors: [
               color.withOpacity(0.15),
               color.withOpacity(0.05),
-              Colors.white,
+              cardBase,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -855,22 +888,21 @@ class _StoriesListScreenState extends State<StoriesListScreen>
               children: [
                 // Left: Emoji icon area
                 Container(
-                  width: 120,
+                  width: 60,
+                  height: 60,
                   margin: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    gradient: LinearGradient(
-                      colors: [
-                        color.withOpacity(0.2),
-                        color.withOpacity(0.08),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    shape: BoxShape.circle,
+                    color: cardBase,
+                  ),
+                  foregroundDecoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: color,
+                      width: 5,
                     ),
                   ),
-                  child: Center(
-                    child: Text(icon, style: const TextStyle(fontSize: 44)),
-                  ),
+                  child: _buildCategoryIcon(icon, color, size: 60),
                 ),
                 // Right: Content
                 Expanded(
@@ -892,7 +924,8 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(icon, style: const TextStyle(fontSize: 12)),
+                              Text(_getCategoryEmoji(story.category),
+                                  style: const TextStyle(fontSize: 12)),
                               const SizedBox(width: 4),
                               Text(
                                 story.category,
@@ -911,10 +944,10 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                           _localizedTitle(story),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: onSurface,
                             height: 1.2,
                           ),
                         ),
@@ -927,7 +960,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 11,
-                              color: AppColors.textLight.withOpacity(0.8),
+                              color: onSurface.withOpacity(0.75),
                               height: 1.3,
                             ),
                           ),
@@ -938,14 +971,14 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                             Icon(
                               Icons.schedule_rounded,
                               size: 13,
-                              color: AppColors.textLight.withOpacity(0.6),
+                              color: onSurface.withOpacity(0.6),
                             ),
                             const SizedBox(width: 4),
                             Text(
                               '${story.readingTimeMinutes} min',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: AppColors.textLight.withOpacity(0.6),
+                                color: onSurface.withOpacity(0.6),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -959,7 +992,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                               '${story.reads} reads',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: AppColors.textLight.withOpacity(0.6),
+                                color: onSurface.withOpacity(0.6),
                               ),
                             ),
                           ],
@@ -998,6 +1031,11 @@ class _StoriesListScreenState extends State<StoriesListScreen>
     final locCode = context.read<LocaleProvider>().localeCode;
     final color = _getCategoryColor(story.category);
     final icon = _getCategoryIcon(story.category);
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    // Elevated card surface: white in light mode, lighter slate in dark mode
+    final cardBase = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.darkSurface
+        : Colors.white;
     // Use the Hindi content when the app language is Hindi (and a Hindi
     // version exists), otherwise fall back to the default content.
     final isHindi = context.watch<LocaleProvider>().isHindi;
@@ -1011,7 +1049,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
       onTap: () => _openStory(story),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardBase,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: color.withOpacity(0.08),
@@ -1037,7 +1075,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                         colors: [
                           color.withOpacity(0.2),
                           color.withOpacity(0.08),
-                          Colors.white,
+                          cardBase,
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -1046,8 +1084,23 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                         top: Radius.circular(20),
                       ),
                     ),
-                    child: Center(
-                      child: Text(icon, style: const TextStyle(fontSize: 40)),
+                     child: Center(
+                       child: Container(
+                         width: 50,
+                         height: 50,
+                         decoration: BoxDecoration(
+                           shape: BoxShape.circle,
+                           color: cardBase,
+                         ),
+                        foregroundDecoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: color,
+                            width: 5,
+                          ),
+                        ),
+                         child: _buildCategoryIcon(icon, color, size: 50),
+                      ),
                     ),
                   ),
                   // Category badge top-left
@@ -1104,10 +1157,10 @@ class _StoriesListScreenState extends State<StoriesListScreen>
                     _localizedTitle(story),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: onSurface,
                       height: 1.2,
                     ),
                   ),
@@ -1163,6 +1216,7 @@ class _StoriesListScreenState extends State<StoriesListScreen>
     String content,
   ) {
     final locCode = context.read<LocaleProvider>().localeCode;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     final isExpanded = _expandedCardIds.contains(storyId);
     // Show the toggle whenever there's a real story to reveal
     final needsToggle = content.length > 80;
@@ -1174,9 +1228,9 @@ class _StoriesListScreenState extends State<StoriesListScreen>
           summary,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 11,
-            color: AppColors.textLight,
+            color: onSurface.withOpacity(0.7),
             height: 1.3,
           ),
         ),
@@ -1187,9 +1241,9 @@ class _StoriesListScreenState extends State<StoriesListScreen>
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               paragraph,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: AppColors.textPrimary,
+                color: onSurface.withOpacity(0.9),
                 height: 1.5,
               ),
             ),
@@ -1383,12 +1437,52 @@ class StoryDetailScreen extends StatelessWidget {
     return match['color'] as Color;
   }
 
+  /// Get category icon for a story (image asset path or emoji).
   String _getCategoryIcon(String category) {
     final match = AppConstants.storyCategories.firstWhere(
       (c) => c['name'] == category,
       orElse: () => {'icon': '📖'},
     );
+    return match['image'] as String? ?? (match['icon'] as String);
+  }
+
+  /// Get category emoji for a story (for chips/labels).
+  String _getCategoryEmoji(String category) {
+    final match = AppConstants.storyCategories.firstWhere(
+      (c) => c['name'] == category,
+      orElse: () => {'icon': '📖'},
+    );
     return match['icon'] as String;
+  }
+
+  /// Build a category icon widget (image asset when available, else emoji).
+  Widget _buildCategoryIcon(String icon, Color color, {double size = 72}) {
+    if (icon.startsWith('assets/')) {
+      return ClipOval(
+        child: Image.asset(
+          icon,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withOpacity(0.15),
+        border: Border.all(
+          color: color.withOpacity(0.4),
+          width: 2,
+        ),
+      ),
+      child: Center(
+        // Half the circle's diameter so the glyph always sits fully inside.
+        child: Text(icon, style: TextStyle(fontSize: size * 0.5)),
+      ),
+    );
   }
 
   @override
@@ -1441,13 +1535,25 @@ class StoryDetailScreen extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    // Decorative icon
-                    Center(
-                      child: Text(
-                        icon,
-                        style: const TextStyle(fontSize: 72),
-                      ),
-                    ),
+                     // Decorative icon
+                     Center(
+                       child: Container(
+                         width: 90,
+                         height: 90,
+                         decoration: BoxDecoration(
+                           shape: BoxShape.circle,
+                           color: Colors.white,
+                         ),
+                         foregroundDecoration: BoxDecoration(
+                           shape: BoxShape.circle,
+                           border: Border.all(
+                             color: color,
+                             width: 5,
+                           ),
+                         ),
+                          child: _buildCategoryIcon(icon, color, size: 90),
+                       ),
+                     ),
                     // Gradient fade at bottom
                     Positioned(
                       bottom: 0,
@@ -1516,7 +1622,8 @@ class StoryDetailScreen extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(icon, style: const TextStyle(fontSize: 14)),
+                        Text(_getCategoryEmoji(story.category),
+                            style: const TextStyle(fontSize: 14)),
                         const SizedBox(width: 6),
                         Text(
                           story.category,

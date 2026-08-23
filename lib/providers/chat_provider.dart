@@ -6,13 +6,53 @@ import '../services/gemini_service.dart';
 import '../services/firebase_service.dart';
 import '../services/audio_service.dart';
 import '../models/chat_model.dart';
+import '../providers/locale_provider.dart';
+import '../utils/translations.dart';
 
 class ChatProvider extends ChangeNotifier {
   final GeminiService _geminiService = GeminiService();
   final FirebaseService _firebaseService = FirebaseService.instance;
 
+  /// The app-wide locale provider instance. Must be injected so we read the
+  /// REAL selected language — creating a fresh LocaleProvider() would always
+  /// return 'en' (its default), which kept AI replies stuck in English.
+  final LocaleProvider? _localeProvider;
+
+  ChatProvider({LocaleProvider? localeProvider})
+      : _localeProvider = localeProvider {
+    // Re-localize the welcome bubble whenever the user switches language.
+    // On phones this provider is created once at startup, so without this
+    // listener a "Namaste" card rendered in English would stay English even
+    // after switching to Hindi/Marathi/Gujarati (web hid the bug because
+    // dev reloads recreate the provider after the new locale persisted).
+    _localeProvider?.addListener(_onLocaleChanged);
+  }
+
+  void _onLocaleChanged() {
+    refreshWelcomeMessage();
+  }
+
+  /// Re-renders the stored welcome message in the current app language.
+  /// No-op if there is no welcome bubble or the text is already current.
+  void refreshWelcomeMessage() {
+    final idx = _messages.indexWhere((m) => m.id == 'welcome');
+    if (idx == -1) return;
+    final localized = Translations.t('chat_welcome', locale: currentLocale);
+    if (_messages[idx].content == localized) return;
+    _messages[idx] = ChatMessage(
+      id: 'welcome',
+      content: localized,
+      isUser: false,
+      timestamp: _messages[idx].timestamp,
+    );
+    notifyListeners();
+  }
+
+  /// Current app language code ('en', 'hi', 'mr', 'gu')
+  String get currentLocale => _localeProvider?.localeCode ?? 'en';
+
   List<ChatMessage> _messages = [];
-  List<ChatConversation> _conversations = [];
+  final List<ChatConversation> _conversations = [];
   String? _currentConversationId;
   bool _isLoading = false;
   bool _isListening = false;
@@ -62,10 +102,10 @@ class ChatProvider extends ChangeNotifier {
     _messages = [];
     _geminiService.startNewChat();
 
-    // Add welcome message
+    // Add welcome message (localized to the selected app language)
     _messages.add(ChatMessage(
       id: 'welcome',
-      content: 'Namaste! 🙏 I am Divine Guide AI, a spiritual assistant inspired by sacred teachings. How may I help you on your spiritual journey today? You can ask me about meditation, mantra chanting, spiritual texts like the Bhagavad Gita, or any questions about life and spirituality.',
+      content: Translations.t('chat_welcome', locale: currentLocale),
       isUser: false,
       timestamp: DateTime.now(),
     ));
@@ -88,8 +128,11 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Get current locale for AI response
+      final locale = currentLocale;
+
       // Get AI response
-      final response = await _geminiService.sendMessage(content);
+      final response = await _geminiService.sendMessage(content, locale: locale);
 
       final aiMessage = ChatMessage(
         id: 'ai_${DateTime.now().millisecondsSinceEpoch}',
@@ -129,7 +172,22 @@ class ChatProvider extends ChangeNotifier {
     _voicePlayingMessageId = messageId;
     _isVoicePlaying = true;
     notifyListeners();
-    await AudioService.instance.speak(text);
+    // Speak in the selected app language, not just English
+    await AudioService.instance.speak(text, language: _ttsLanguage);
+  }
+
+  /// BCP-47 tag for the TTS engine matching the selected app language
+  String get _ttsLanguage {
+    switch (currentLocale) {
+      case 'hi':
+        return 'hi-IN';
+      case 'mr':
+        return 'mr-IN';
+      case 'gu':
+        return 'gu-IN';
+      default:
+        return 'en-US';
+    }
   }
 
   /// Stop voice playback
@@ -262,5 +320,12 @@ class ChatProvider extends ChangeNotifier {
   /// Get suggested questions
   List<SuggestedQuestion> getSuggestedQuestions() {
     return SuggestedQuestion.spiritualQuestions;
+  }
+
+  @override
+  void dispose() {
+    _localeProvider?.removeListener(_onLocaleChanged);
+    AudioService.instance.ttsPlaying.removeListener(_onTtsStateChanged);
+    super.dispose();
   }
 }

@@ -36,10 +36,10 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           'Challenges',
                           style: TextStyle(
                             fontSize: 28,
@@ -47,7 +47,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        const LanguageSwitcherButton(),
+                        LanguageSwitcherButton(),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -310,7 +310,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 10,
                   color: AppColors.textSecondary,
                 ),

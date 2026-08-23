@@ -21,13 +21,17 @@ class SavedVersesScreen extends StatelessWidget {
     final localeProvider = context.watch<LocaleProvider>();
     final gitaProvider = context.watch<GitaProvider>();
     final locCode = localeProvider.localeCode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
+    final cardColor = isDark ? AppColors.darkSurface : Colors.white;
     final bookmarks = gitaProvider.bookmarks;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           Translations.get('saved_verses', locale: locCode),
-          style: const TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 18, color: textPrimary),
         ),
         actions: const [
           LanguageSwitcherButton(),
@@ -72,6 +76,9 @@ class SavedVersesScreen extends StatelessWidget {
   Widget _buildEmptyState(BuildContext context, String locCode) {
     final localeProvider = context.watch<LocaleProvider>();
     final isHindi = localeProvider.isHindi;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
@@ -94,19 +101,19 @@ class SavedVersesScreen extends StatelessWidget {
             Text(
               Translations.get('no_saved_verses', locale: locCode),
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: textPrimary,
               ),
             ),
             const SizedBox(height: 10),
             Text(
               Translations.get('saved_verses_hint', locale: locCode),
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: AppColors.textSecondary,
+                color: textSecondary,
                 height: 1.5,
               ),
             ),
@@ -135,13 +142,17 @@ class _VerseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final localeProvider = context.watch<LocaleProvider>();
     final isHindi = localeProvider.isHindi;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.textLight : AppColors.textSecondary;
+    final cardColor = isDark ? AppColors.darkSurface : Colors.white;
     final shloka = verseData != null ? verseData![0] : (bookmark.shloka ?? '');
     final translation = verseData != null
         ? (isHindi ? verseData![3] : verseData![2])
         : (bookmark.translation ?? '');
 
     return Material(
-      color: Colors.white,
+      color: cardColor,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -197,13 +208,13 @@ class _VerseCard extends StatelessWidget {
                         shloka,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textPrimary,
-                          height: 1.4,
-                          fontFamily: 'Mukta',
-                          fontWeight: FontWeight.w500,
-                        ),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: textPrimary,
+                        height: 1.4,
+                        fontFamily: 'Mukta',
+                        fontWeight: FontWeight.w500,
+                      ),
                       ),
                     ],
                     if (translation.isNotEmpty) ...[
@@ -212,11 +223,11 @@ class _VerseCard extends StatelessWidget {
                         translation,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppColors.textSecondary,
-                          height: 1.4,
-                        ),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: textSecondary,
+                        height: 1.4,
+                      ),
                       ),
                     ],
                   ],
