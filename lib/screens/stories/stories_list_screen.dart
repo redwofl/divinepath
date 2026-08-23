@@ -59,9 +59,10 @@ class _StoriesListScreenState extends State<StoriesListScreen>
 
     // Pre-create card animations for up to 12 cards
     for (int i = 0; i < 12; i++) {
-      // Each card gets 216ms to animate, with 120ms gap between starts
-      // Card 0 starts at 30%, Card 1 at 40%, etc.
-      final start = 0.30 + i * 0.10;
+      // Staggered entrance: each card starts slightly later than the one
+      // before it. Step of 0.08 keeps every interval inside the controller's
+      // 0.0–1.0 window (the old 0.10 step pushed cards 9+ past 1.0).
+      final start = (0.30 + i * 0.08).clamp(0.0, 0.82);
       final end = (start + 0.18).clamp(0.0, 1.0);
       _cardAnimations.add(
         CurvedAnimation(
