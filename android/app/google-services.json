@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "366379144599",
+    "project_id": "divinepathai-3f1cd",
+    "storage_bucket": "divinepathai-3f1cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366379144599:android:a7608ccda4149ad1c120d2",
+        "android_client_info": {
+          "package_name": "com.divinepath.ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD798gEQr4_Xgb3zY3Y1qMP6HVYuGLHTTk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
