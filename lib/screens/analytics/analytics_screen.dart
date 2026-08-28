@@ -7,13 +7,17 @@ class AnalyticsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleColor = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final subColor = isDark ? AppColors.textLight : AppColors.textSecondary;
+    final cardColor = isDark ? AppColors.darkCard : Colors.white;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
@@ -21,18 +25,18 @@ class AnalyticsScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: titleColor,
                     ),
                   ),
-                  LanguageSwitcherButton(),
+                  const LanguageSwitcherButton(),
                 ],
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'Track your spiritual journey',
                 style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.textSecondary,
+                  color: subColor,
                 ),
               ),
               const SizedBox(height: 24),
@@ -40,35 +44,35 @@ class AnalyticsScreen extends StatelessWidget {
               // Summary cards
               Row(
                 children: [
-                  _buildSummaryCard('Today', '108', 'chants', AppColors.primary),
+                  _buildSummaryCard('Today', '108', 'chants', AppColors.primary, isDark),
                   const SizedBox(width: 12),
-                  _buildSummaryCard('Week', '756', 'chants', const Color(0xFF7C3AED)),
+                  _buildSummaryCard('Week', '756', 'chants', const Color(0xFF7C3AED), isDark),
                 ],
               ),
               const SizedBox(height: 12),
               Row(
                 children: [
-                  _buildSummaryCard('Month', '3,240', 'chants', const Color(0xFF059669)),
+                  _buildSummaryCard('Month', '3,240', 'chants', const Color(0xFF059669), isDark),
                   const SizedBox(width: 12),
-                  _buildSummaryCard('Total', '12,580', 'chants', AppColors.primaryLight),
+                  _buildSummaryCard('Total', '12,580', 'chants', AppColors.primaryLight, isDark),
                 ],
               ),
               const SizedBox(height: 24),
 
               // Weekly chart
-              const Text(
+              Text(
                 'Weekly Progress',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: titleColor,
                 ),
               ),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -95,16 +99,16 @@ class AnalyticsScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Text('Mon', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
-                        Text('Tue', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
-                        Text('Wed', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
-                        Text('Thu', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
-                        Text('Fri', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
-                        Text('Sat', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
-                        Text('Sun', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
+                        Text('Mon', style: TextStyle(fontSize: 11, color: isDark ? AppColors.textLight : AppColors.textLight)),
+                        Text('Tue', style: TextStyle(fontSize: 11, color: isDark ? AppColors.textLight : AppColors.textLight)),
+                        Text('Wed', style: TextStyle(fontSize: 11, color: isDark ? AppColors.textLight : AppColors.textLight)),
+                        Text('Thu', style: TextStyle(fontSize: 11, color: isDark ? AppColors.textLight : AppColors.textLight)),
+                        Text('Fri', style: TextStyle(fontSize: 11, color: isDark ? AppColors.textLight : AppColors.textLight)),
+                        Text('Sat', style: TextStyle(fontSize: 11, color: isDark ? AppColors.textLight : AppColors.textLight)),
+                        Text('Sun', style: TextStyle(fontSize: 11, color: isDark ? AppColors.textLight : AppColors.textLight)),
                       ],
                     ),
                   ],
@@ -113,26 +117,26 @@ class AnalyticsScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               // Stats
-              const Text(
+              Text(
                 'Detailed Stats',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: titleColor,
                 ),
               ),
               const SizedBox(height: 12),
-              _buildDetailRow('Total Mantras Chanted', '12,580'),
-              _buildDetailRow('Total Malas Completed', '116'),
-              _buildDetailRow('Meditation Minutes', '1,240'),
-              _buildDetailRow('Stories Read', '24'),
-              _buildDetailRow('Gita Verses Read', '186'),
-              _buildDetailRow('Current Streak', '7 days'),
-              _buildDetailRow('Longest Streak', '30 days'),
-              _buildDetailRow('Challenges Completed', '18'),
-              _buildDetailRow('Achievements Unlocked', '5'),
-              _buildDetailRow('XP Earned', '1,250'),
-              _buildDetailRow('Coins Earned', '500'),
+              _buildDetailRow('Total Mantras Chanted', '12,580', isDark),
+              _buildDetailRow('Total Malas Completed', '116', isDark),
+              _buildDetailRow('Meditation Minutes', '1,240', isDark),
+              _buildDetailRow('Stories Read', '24', isDark),
+              _buildDetailRow('Gita Verses Read', '186', isDark),
+              _buildDetailRow('Current Streak', '7 days', isDark),
+              _buildDetailRow('Longest Streak', '30 days', isDark),
+              _buildDetailRow('Challenges Completed', '18', isDark),
+              _buildDetailRow('Achievements Unlocked', '5', isDark),
+              _buildDetailRow('XP Earned', '1,250', isDark),
+              _buildDetailRow('Coins Earned', '500', isDark),
             ],
           ),
         ),
@@ -140,12 +144,12 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCard(String label, String value, String unit, Color color) {
+  Widget _buildSummaryCard(String label, String value, String unit, Color color, bool isDark) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkCard : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: color.withOpacity(0.1),
@@ -173,9 +177,9 @@ class AnalyticsScreen extends StatelessWidget {
             ),
             Text(
               '$unit $label',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: AppColors.textSecondary,
+                color: isDark ? AppColors.textLight : AppColors.textSecondary,
               ),
             ),
           ],
@@ -223,13 +227,13 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(String label, String value, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkCard : Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -237,9 +241,9 @@ class AnalyticsScreen extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: AppColors.textPrimary,
+                color: isDark ? AppColors.textOnDark : AppColors.textPrimary,
               ),
             ),
             Text(

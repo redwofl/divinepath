@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/achievement_model.dart';
+import '../../providers/locale_provider.dart';
+import '../../utils/translations.dart';
 import '../../widgets/common/language_switcher_button.dart';
 
 class ChallengesScreen extends StatefulWidget {
@@ -28,6 +32,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -36,26 +41,30 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Challenges',
+                          Translations.get('challenges', locale: context.watch<LocaleProvider>().localeCode),
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: isDark
+                                ? AppColors.textOnDark
+                                : AppColors.textPrimary,
                           ),
                         ),
-                        LanguageSwitcherButton(),
+                        const LanguageSwitcherButton(),
                       ],
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'Complete challenges and earn rewards',
+                    Text(
+                      Translations.get('challenges_subtitle', locale: context.watch<LocaleProvider>().localeCode),
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondary,
+                        color: isDark
+                            ? AppColors.textLight
+                            : AppColors.textSecondary,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -145,13 +154,38 @@ class _ChallengesScreenState extends State<ChallengesScreen>
     );
   }
 
+  void _startChallenge(DailyChallenge challenge) {
+    switch (challenge.type) {
+      case 'chant':
+      case 'prayer':
+        context.go('/mantra');
+        break;
+      case 'meditation':
+        context.push('/meditation');
+        break;
+      case 'story':
+        context.go('/stories');
+        break;
+      case 'verse':
+        context.go('/gita');
+        break;
+      default:
+        context.go('/home');
+    }
+  }
+
   Widget _buildDailyChallenges() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListView.builder(
       padding: const EdgeInsets.all(20),
       itemCount: DailyChallenge.defaultChallenges.length,
       itemBuilder: (context, index) {
         final challenge = DailyChallenge.defaultChallenges[index];
         final isCompleted = index % 3 == 0; // Sample: some completed
+        final titleColor =
+            isCompleted ? AppColors.success : (isDark ? AppColors.textOnDark : AppColors.textPrimary);
+        final descColor =
+            isDark ? AppColors.textLight : AppColors.textSecondary;
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
@@ -159,8 +193,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isCompleted
-                  ? AppColors.success.withOpacity(0.05)
-                  : Colors.white,
+                  ? AppColors.success.withOpacity(isDark ? 0.15 : 0.05)
+                  : (isDark ? AppColors.darkCard : Colors.white),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isCompleted
@@ -176,7 +210,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                   decoration: BoxDecoration(
                     color: isCompleted
                         ? AppColors.success.withOpacity(0.1)
-                        : AppColors.secondary,
+                        : (isDark ? AppColors.darkSurface : AppColors.secondary),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Center(
@@ -194,17 +228,15 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: isCompleted
-                              ? AppColors.success
-                              : AppColors.textPrimary,
+                          color: titleColor,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         challenge.description,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color: descColor,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -232,18 +264,21 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                   const Icon(Icons.check_circle_rounded,
                       color: AppColors.success, size: 28)
                 else
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Text(
-                      'Start',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                  GestureDetector(
+                    onTap: () => _startChallenge(challenge),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Text(
+                        'Start',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -257,6 +292,15 @@ class _ChallengesScreenState extends State<ChallengesScreen>
 
   Widget _buildAchievements() {
     final achievements = Achievement.defaultAchievements;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkCard : Colors.white;
+    final lockedCardColor =
+        isDark ? AppColors.darkSurface : Colors.white.withOpacity(0.5);
+    final titleColor = isDark ? AppColors.textOnDark : AppColors.textPrimary;
+    final lockedTitleColor =
+        isDark ? AppColors.textLight : AppColors.textSecondary;
+    final descriptionColor =
+        isDark ? AppColors.textLight : AppColors.textSecondary;
     return GridView.builder(
       padding: const EdgeInsets.all(20),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -274,7 +318,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isUnlocked ? Colors.white : Colors.white.withOpacity(0.5),
+            color: isUnlocked ? cardColor : lockedCardColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isUnlocked
@@ -299,9 +343,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: isUnlocked
-                      ? AppColors.textPrimary
-                      : AppColors.textLight,
+                  color: isUnlocked ? titleColor : lockedTitleColor,
                 ),
               ),
               const SizedBox(height: 4),
@@ -310,9 +352,11 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10,
-                  color: AppColors.textSecondary,
+                  color: isUnlocked
+                      ? descriptionColor
+                      : (isDark ? AppColors.textLight : AppColors.textSecondary),
                 ),
               ),
               const SizedBox(height: 8),

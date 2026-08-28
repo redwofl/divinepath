@@ -53,6 +53,18 @@ class Translations {
       'start_chanting': 'Start Chanting',
       'select_mantra': 'Select Mantra',
       'chants': 'chants',
+      'chants_today': 'chants today',
+      'favorites': 'Favorites',
+      'percent_of_mala': '{percent}% of mala',
+      'completed': 'completed',
+      'mala_short': 'Mala! 🕉️',
+      'mala_complete': '🕉️ Mala Complete! 🙏',
+      'preparing_ad': 'Preparing ad…',
+      'watch_ad_bonus': '🎁 Watch Ad • +1 Mala Bonus',
+      'reward_ads_mobile': 'Reward ads are only available in the mobile app',
+      'preparing_reward_ad': 'Preparing your reward ad… 🙏',
+      'bonus_mala_completed': '🕉️ Bonus mala completed! +{count} chants',
+      'bonus_chants_added': '🙏 +{count} bonus chants added!',
 
       // Game Screen
       'divine_bubbles': 'Divine Bubbles',
@@ -149,6 +161,8 @@ class Translations {
       'results_count': '{count} verses found',
       'achievements': 'Achievements',
       'achievements_unlocked': '{count} achievements unlocked',
+      'challenges': 'Challenges',
+      'challenges_subtitle': 'Complete challenges and earn rewards',
       'analytics': 'Analytics',
       'spiritual_progress': 'View your spiritual progress',
       'dark_mode': 'Dark Mode',
@@ -210,6 +224,18 @@ class Translations {
       'peace_with_you': 'Peace be with you',
       'could_not_play_sound': 'Could not play "{sound}" sound',
       'voice_guidance': 'Voice guidance',
+
+      // Daily Wisdom Quotes
+      'daily_quote_0': 'The soul is neither born, nor does it ever die. - Bhagavad Gita',
+      'daily_quote_1': 'Peace comes from within. Do not seek it without. - Buddha',
+      'daily_quote_2': 'The mind is everything. What you think you become. - Buddha',
+      'daily_quote_3': 'Yoga is the journey of the self, through the self, to the self. - Bhagavad Gita',
+      'daily_quote_4': 'When meditation is mastered, the mind is unwavering like the flame of a lamp in a windless place. - Bhagavad Gita',
+      'daily_quote_5': 'Your duty is to act, not to be attached to the fruits of action. - Bhagavad Gita',
+      'daily_quote_6': 'The happiness which comes from long practice brings tears to the eyes. - Yogi Bhajan',
+      'daily_quote_7': 'In the middle of difficulty lies opportunity. - Albert Einstein',
+      'daily_quote_8': 'The greatest glory in living lies not in never falling, but in rising every time we fall. - Nelson Mandela',
+      'daily_quote_9': 'The only way to do great work is to love what you do. - Steve Jobs',
 
       // Language selection
       'select_language': 'Select Language',
@@ -287,6 +313,18 @@ class Translations {
       'start_chanting': 'जाप शुरू करें',
       'select_mantra': 'मंत्र चुनें',
       'chants': 'जाप',
+      'chants_today': 'आज के जाप',
+      'favorites': 'पसंदीदा',
+      'percent_of_mala': '{percent}% माला',
+      'completed': 'पूरा हुआ',
+      'mala_short': 'माला! 🕉️',
+      'mala_complete': '🕉️ माला पूरा! 🙏',
+      'preparing_ad': 'विज्ञापन तैयार हो रहा है…',
+      'watch_ad_bonus': '🎁 Ad देखें • +1 माला बोनस',
+      'reward_ads_mobile': 'पुरस्कृत विज्ञापन केवल मोबाइल ऐप में उपलब्ध हैं',
+      'preparing_reward_ad': 'आपका पुरस्कृत विज्ञापन तैयार हो रहा है… 🙏',
+      'bonus_mala_completed': '🕉️ बोनस माला पूरी हुई! +{count} जाप',
+      'bonus_chants_added': '🙏 +{count} बोनस जाप जोड़े गए!',
 
       // Game Screen
       'divine_bubbles': 'दिव्य बुलबुले',
@@ -358,6 +396,8 @@ class Translations {
       'results_count': '{count} श्लोक मिले',
       'achievements': 'उपलब्धियाँ',
       'achievements_unlocked': '{count} उपलब्धियाँ अनलॉक',
+      'challenges': 'चुनौतियाँ',
+      'challenges_subtitle': 'चुनौतियाँ पूरी करें और पुरस्कार अर्जित करें',
       'analytics': 'विश्लेषण',
       'spiritual_progress': 'अपनी आध्यात्मिक प्रगति देखें',
       'dark_mode': 'डार्क मोड',
@@ -419,6 +459,18 @@ class Translations {
       'peace_with_you': 'आपके साथ शांति हो',
       'could_not_play_sound': '"{sound}" ध्वनि नहीं चल सकी',
       'voice_guidance': 'वॉइस गाइडेंस',
+
+      // Daily Wisdom Quotes
+      'daily_quote_0': 'आत्मा न जन्मती है, न ही कभी नश्वर होती है। - भगवद् गीता',
+      'daily_quote_1': 'शांति भीतर से आती है। इसे बाहर ढूंढने मत देखो। - बुद्ध',
+      'daily_quote_2': 'मन ही सब कुछ है। जो तुम सोचते हो, वही तुम बनते हो। - बुद्ध',
+      'daily_quote_3': 'योग स्वयं की यात्रा है, स्वयं के द्वारा, स्वयं तक। - भगवद् गीता',
+      'daily_quote_4': 'जब ध्यान का समर्पण हो जाता है, तो मन एक वाऱ्यरहित जगह में लैंप की लौ की तरह अटल हो जाता है। - भगवद् गीता',
+      'daily_quote_5': 'तुम्हारा कर्तव्य करना है, क्रिया के फल से लटकना नहीं चाहिए। - भगवद् गीता',
+      'daily_quote_6': 'लंबे अभ्यास से प्राप्त खुशी आँखों को आँसू लाती है। - योगी भजन',
+      'daily_quote_7': 'मुश्किल के बीच में अवसर छिपा है। - अल्बर्ट आइंस्टीन',
+      'daily_quote_8': 'जीवन में सबसे बड़ी प्रतिष्ठा कभी गिरने में नहीं, बल्कि हर बार गिरने पर उठने में है। - नेल्सन मंडेला',
+      'daily_quote_9': 'महान काम करने का एकमात्र तरीका यही है कि तुम प्यार करो जो तुम करते हो। - स्टीव जॉब्स',
 
       // Language selection
       'select_language': 'भाषा चुनें',
@@ -496,6 +548,18 @@ class Translations {
       'start_chanting': 'जप सुरू करा',
       'select_mantra': 'मंत्र निवडा',
       'chants': 'जप',
+      'chants_today': 'आजचे जप',
+      'favorites': 'आवडते',
+      'percent_of_mala': '{percent}% माळा',
+      'completed': 'पूर्ण झाले',
+      'mala_short': 'माळा! 🕉️',
+      'mala_complete': '🕉️ माळा पूर्ण! 🙏',
+      'preparing_ad': 'जाहिरात तयार होत आहे…',
+      'watch_ad_bonus': '🎁 जाहिरात पहा • +1 माळा बोनस',
+      'reward_ads_mobile': 'पुरस्कार जाहिरात केवळ मोबाइल अॅपमध्ये उपलब्ध आहेत',
+      'preparing_reward_ad': 'तुमची पुरस्कार जाहिरात तयार होत आहे… 🙏',
+      'bonus_mala_completed': '🕉️ बोनस माळा पूर्ण! +{count} जप',
+      'bonus_chants_added': '🙏 +{count} बोनस जप जोडले!',
 
       // Game Screen
       'divine_bubbles': 'दिव्य बुडबुडे',
@@ -567,6 +631,8 @@ class Translations {
       'results_count': '{count} श्लोक सापडले',
       'achievements': 'उपलब्धी',
       'achievements_unlocked': '{count} उपलब्धी अनलॉक',
+      'challenges': 'आव्हाने',
+      'challenges_subtitle': 'आव्हाने पूर्ण करा आणि बक्षिसे मिळवा',
       'analytics': 'विश्लेषण',
       'spiritual_progress': 'तुमची आध्यात्मिक प्रगती पहा',
       'dark_mode': 'डार्क मोड',
@@ -599,6 +665,18 @@ class Translations {
       'minutes': 'मिनिटे',
       'days': 'दिवस',
       'admin_panel': 'प्रशासन पटल',
+
+      // Daily Wisdom Quotes
+      'daily_quote_0': 'आत्मा न जन्मते न मृत्यूला जात नाही. - भगवद गीता',
+      'daily_quote_1': 'शांती आता येते. तिलाबाहेर शोधून घेऊ नको. - बुद्ध',
+      'daily_quote_2': 'मन अटून सर्व काही आहे. जे कल्पना करता ते व्हावेशी. - बुद्ध',
+      'daily_quote_3': 'योग ही आत्म्याची प्रवास आहे, आत्म्यामधून, आत्म्यापर्यंत. - भगवद गीता',
+      'daily_quote_4': 'ध्यान संपूर्णपणे समजल्यावर, मन वाऱ्याशिवायच्या ठिकाणी लालटिनच्या दीपाच्या प्रजलनासारखे अडकून राहते. - भगवद गीता',
+      'daily_quote_5': 'तुमचा कर्तव्य काम केलेणे असून, कामाच्या फळांना बंधलून घेऊ नको. - भगवद गीता',
+      'daily_quote_6': 'दीर्घ अभ्यासातून मिळणाऱ्या आनंदाने आखळेकडून आठळते. - योगी भजन',
+      'daily_quote_7': 'मुश्किलेच्या मध्ये संधी जपली गेली आहे. - अल्बर्ट आइन्स्टाईन',
+      'daily_quote_8': 'जीवण्याचा सर्वाधिक यश साधणे कधीही ढालण्यामध्ये नाही, तर एकदा ढालल्यावर उठण्यामध्ये असून. - नेल्सन मंडेला',
+      'daily_quote_9': 'मोठे काम करण्याची एकटी मार्ग म्हणजे ते काय आपण कायमी असावे अशा प्रेमाने. - स्टीव्ह जॉब्स',
 
       // Language selection
       'select_language': 'भाषा निवडा',
@@ -676,6 +754,18 @@ class Translations {
       'start_chanting': 'જપ શરૂ કરો',
       'select_mantra': 'મંત્ર પસંદ કરો',
       'chants': 'જપ',
+      'chants_today': 'આજના જપ',
+      'favorites': 'મનપસંદ',
+      'percent_of_mala': '{percent}% માળા',
+      'completed': 'પૂર્ણ',
+      'mala_short': 'માળા! 🕉️',
+      'mala_complete': '🕉️ માળા પૂર્ણ! 🙏',
+      'preparing_ad': 'જાહેરાત તૈયાર થાય છે…',
+      'watch_ad_bonus': '🎁 જાહેરાત જુઓ • +1 માળા બોનસ',
+      'reward_ads_mobile': 'સ્વાયત્ત જાહેરાતો માત્ર મોબાઇલ એપ્પમાં ઉપલબ્ધ છે',
+      'preparing_reward_ad': 'તમારી સ્વાયત્ત જાહેરાત તૈયાર થાય છે… 🙏',
+      'bonus_mala_completed': '🕉️ બોનસ માળા પૂર્ણ! +{count} જપ',
+      'bonus_chants_added': '🙏 +{count} બોનસ જપ ઉમેરાયા!',
 
       // Game Screen
       'divine_bubbles': 'દિવ્ય પરપોટા',
@@ -747,6 +837,8 @@ class Translations {
       'results_count': '{count} શ્લોક મળ્યા',
       'achievements': 'સિદ્ધિઓ',
       'achievements_unlocked': '{count} સિદ્ધિઓ અનલૉક',
+      'challenges': 'પડકારો',
+      'challenges_subtitle': 'પડકારો પૂર્ણ કરો અને પુરસ્કાર મેળવો',
       'analytics': 'વિશ્લેષણ',
       'spiritual_progress': 'તમારી આધ્યાત્મિક પ્રગતિ જુઓ',
       'dark_mode': 'ડાર્ક મોડ',
@@ -780,6 +872,18 @@ class Translations {
       'days': 'દિવસ',
       'admin_panel': 'એડમિન પેનલ',
 
+      // Daily Wisdom Quotes
+      'daily_quote_0': 'આત્મા જન્મે છે કે નહીં અને તે ક્યારેય મૂંઝવણ નથી. - ભગવદ ગીતા',
+      'daily_quote_1': 'શાંતિ અંદરથી આવે છે. તેને બાહેર શોધશો નહીં. - બુદ્ધ',
+      'daily_quote_2': 'મન એ જ બધું છે. જેવી વિચારો છો તે જ બનો છો. - બુદ્ધ',
+      'daily_quote_3': 'યોગ સ્વયંની યાત્રા છે, સ્વયં દ્વારા, સ્વયં સુધી. - ભગવદ ગીતા',
+      'daily_quote_4': 'જ્યારે ધ્યાન પૂરી રીતે સમજાય છે, ત્યારે મન હવારહિત જગ્યાએ દીવાની લિગ્ન જેવું ઊંચકુઓક્યું રહે છે. - ભગવદ ગીતા',
+      'daily_quote_5': 'તમારું કર્તવ્ય કરવું છે, કાર્યના ફળથી જોડાણ ન કરવું. - ભગવદ ગીતા',
+      'daily_quote_6': 'લાંબી અભ્યાસથી મળતી આનંદ આંખોને આંસુઓ લાવે છે. - યોગી ભજન',
+      'daily_quote_7': 'મુશ્કેલીના વચ્ચે તક છુપાયેલી છે. - અલ્બર્ટ આઇન્સ્ટાઇન',
+      'daily_quote_8': 'જીવવાની મોટી પ્રખ્યાતિ ક્યારેય ઊંધો પડવામાં નથી, પણ દરેક વાર ઊંધો પડીને ઊઠવામાં છે. - નેલ્સન મંડેલા',
+      'daily_quote_9': 'મોટું કામ કરવાનો એકલો રસ્તો ત્યારે પ્રેમ કરવાનો છે. - સ્ટીવ જોબ્સ',
+
       // Language selection
       'select_language': 'ભાષા પસંદ કરો',
       'english': 'English',
@@ -805,6 +909,16 @@ class Translations {
       });
     }
     return text;
+  }
+
+  /// Total number of localized daily wisdom quotes.
+  static const int dailyQuoteCount = 10;
+
+  /// Get the daily wisdom quote for a given day, localized to [locale].
+  /// Falls back to English if the translation for [locale] is missing.
+  static String getDailyQuote(int day, {String locale = 'en'}) {
+    final index = day % dailyQuoteCount;
+    return get('daily_quote_$index', locale: locale);
   }
 
   /// Get all supported locales

@@ -143,18 +143,26 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
     super.dispose();
   }
 
-  /// Always show the FULL mantra text (first entry in devanagari)
-  String _getDisplayName(MantraProvider provider) {
-    final mantraName = provider.selectedMantra.name;
+  /// Show the floating bubble mantra text in the user's language: English name
+  /// for the 'en' locale, Devanagari (from _displayNameMap) for the others.
+  String _getDisplayName(MantraProvider provider, String locCode) {
+    return _getLocalizedMantraName(provider.selectedMantra.name, locCode);
+  }
+
+  /// Show the mantra name in the user's language: English name for the
+  /// 'en' locale, Devanagari (from _displayNameMap) for the others.
+  String _getLocalizedMantraName(String mantraName, String locCode) {
+    if (locCode == 'en') return mantraName;
     final names = _displayNameMap[mantraName];
     if (names != null && names.isNotEmpty) {
-      return names[0]; // Full mantra text only
+      return names[0]; // Devanagari full name
     }
     return mantraName;
   }
 
   /// Spawn a floating divine name
   void _spawnFloatingName(MantraProvider provider) {
+    final locCode = context.read<LocaleProvider>().localeCode;
     // Random initial horizontal offset from center (-30 to +30)
     final xOffset = _random.nextDouble() * 60 - 30;
     // Random horizontal velocity: some go left (-), some right (+)
@@ -166,7 +174,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
     final rotationSpeed = (_random.nextDouble() * 2.0 - 1.0) * 0.06;
     // Random font size for variety
     final fontSize = 18.0 + _random.nextDouble() * 14.0; // 18 to 32
-    final displayName = _getDisplayName(provider);
+    final displayName = _getDisplayName(provider, locCode);
     _nameCounts[displayName] = (_nameCounts[displayName] ?? 0) + 1;
 
     // Use deity-specific color, fall back to primary gold
@@ -371,13 +379,14 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
   Future<void> _watchAdForBonus(MantraProvider provider) async {
     final messenger = ScaffoldMessenger.of(context);
     final admob = AdmobService.instance;
+    final locCode = context.read<LocaleProvider>().localeCode;
 
     if (_isWatchingAd) return; // one ad at a time
     if (!admob.isSupported) {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Reward ads are only available in the mobile app',
+            Translations.get('reward_ads_mobile', locale: locCode),
             textAlign: TextAlign.center,
           ),
         ),
@@ -392,9 +401,9 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
     if (!admob.isRewardedReady) {
       admob.loadRewarded(force: true);
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Preparing your reward ad… 🙏',
+            Translations.get('preparing_reward_ad', locale: locCode),
             textAlign: TextAlign.center,
           ),
         ),
@@ -409,9 +418,9 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
       if (!admob.isRewardedReady) {
         setState(() => _isWatchingAd = false);
         messenger.showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Ad is not available right now. Please try again.',
+              Translations.get('ad_not_available', locale: locCode),
               textAlign: TextAlign.center,
             ),
           ),
@@ -432,17 +441,19 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
           backgroundColor: AppColors.primary,
           content: Text(
             malasGained
-                ? '🕉️ Bonus mala completed! +${AppConstants.malaCount} chants'
-                : '🙏 +${AppConstants.malaCount} bonus chants added!',
+                ? Translations.t('bonus_mala_completed', locale: locCode,
+                    params: {'count': '${AppConstants.malaCount}'})
+                : Translations.t('bonus_chants_added', locale: locCode,
+                    params: {'count': '${AppConstants.malaCount}'}),
             textAlign: TextAlign.center,
           ),
         ),
       );
     } else {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Ad is not available right now. Please try again.',
+            Translations.get('ad_not_available', locale: locCode),
             textAlign: TextAlign.center,
           ),
         ),
@@ -475,10 +486,11 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
 
   /// Spawn a floating score popup (+1, combo, or Mala!)
   void _spawnScorePopup(int count) {
+    final locCode = context.read<LocaleProvider>().localeCode;
     String label;
     bool isSpecial = false;
     if (count % 108 == 0) {
-      label = 'Mala! 🕉️';
+      label = Translations.get('mala_short', locale: locCode);
       isSpecial = true;
     } else if (_tapCombo > 2) {
       label = '🔥 ${_tapCombo}x';
@@ -667,7 +679,8 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              provider.selectedMantra.name,
+                              _getLocalizedMantraName(
+                                  provider.selectedMantra.name, locCode),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -719,7 +732,8 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                               ConstrainedBox(
                                 constraints: const BoxConstraints(maxWidth: 90),
                                 child: Text(
-                                  provider.selectedMantra.name,
+                                  _getLocalizedMantraName(
+                                      provider.selectedMantra.name, locCode),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -765,13 +779,13 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
                           children: [
                             const Icon(Icons.star_rounded,
                                 color: AppColors.primary, size: 16),
-                            SizedBox(width: 4),
-                            const Text(
-                              'Favorites',
+                            const SizedBox(width: 4),
+                            Text(
+                              Translations.get('favorites', locale: locCode),
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -960,7 +974,11 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        isCounting ? 'Tap to chant' : 'Tap to start',
+                                        isCounting
+                                            ? Translations.get('tap_to_chant',
+                                                locale: locCode)
+                                            : Translations.get('tap_to_start',
+                                                locale: locCode),
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: AppColors.textSecondary,
@@ -974,7 +992,8 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                                       ),
                                       if (autoMode)
                                         Text(
-                                          'Auto mode ●',
+                                          Translations.get('auto_mode',
+                                              locale: locCode),
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: AppColors.primary,
@@ -1068,23 +1087,30 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                         children: [
                           _buildMalaStat(
                             icon: Icons.timer_outlined,
-                            label: 'This Session',
+                            label: Translations.get('this_session',
+                                locale: locCode),
                             value: '$currentCount',
-                            sub: '${(progress * 100).toInt()}% of mala',
+                            sub: Translations.t('percent_of_mala',
+                                locale: locCode,
+                                params: {
+                                  'percent': '${(progress * 100).toInt()}'
+                                }),
                           ),
                           const SizedBox(width: 10),
                           _buildMalaStat(
                             icon: Icons.auto_awesome_rounded,
-                            label: 'Total Malas',
+                            label: Translations.get('total_malas_short',
+                                locale: locCode),
                             value: '$totalMalasInSession',
-                            sub: 'completed',
+                            sub: Translations.get('completed', locale: locCode),
                           ),
                           const SizedBox(width: 10),
                           _buildMalaStat(
                             icon: Icons.wb_sunny_outlined,
-                            label: 'Daily',
+                            label: Translations.get('daily', locale: locCode),
                             value: Helpers.formatNumber(provider.dailyCount),
-                            sub: 'chants today',
+                            sub: Translations.get('chants_today',
+                                locale: locCode),
                           ),
                         ],
                       ),
@@ -1109,8 +1135,10 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                               : const Icon(Icons.card_giftcard_rounded, size: 18),
                           label: Text(
                             _isWatchingAd
-                                ? 'Preparing ad…'
-                                : '🎁 Watch Ad • +1 Mala Bonus',
+                                ? Translations.get('preparing_ad',
+                                    locale: locCode)
+                                : Translations.get('watch_ad_bonus',
+                                    locale: locCode),
                           ),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppColors.primary,
@@ -1130,7 +1158,9 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                           child: OutlinedButton.icon(
                             onPressed: () => provider.endSession(),
                             icon: const Icon(Icons.stop_rounded),
-                            label: const Text('End Session & Save'),
+                            label: Text(
+                                Translations.get('end_session_save',
+                                    locale: locCode)),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.error,
                               side: const BorderSide(color: AppColors.error),
@@ -1144,7 +1174,9 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                           child: ElevatedButton.icon(
                             onPressed: () => provider.startCounting(),
                             icon: const Icon(Icons.play_arrow_rounded),
-                            label: const Text('Start Chanting'),
+                            label: Text(
+                                Translations.get('start_chanting',
+                                    locale: locCode)),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
@@ -1299,7 +1331,8 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                           Transform.scale(
                             scale: mc.scale,
                             child: Text(
-                              '🕉️ Mala Complete! 🙏',
+                              Translations.get('mala_complete',
+                                  locale: locCode),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 24,
@@ -1439,6 +1472,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
         // Local snapshot so UI re-renders when favorites change
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
+            final locCode = ctx.watch<LocaleProvider>().localeCode;
             return Container(
               decoration: const BoxDecoration(
                 color: AppColors.darkSurface,
@@ -1452,10 +1486,10 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                 children: [
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Select Mantra',
-                          style: TextStyle(
+                          Translations.get('select_mantra', locale: locCode),
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -1531,7 +1565,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                               ),
                             ),
                             title: Text(
-                              mantra.name,
+                              _getLocalizedMantraName(mantra.name, locCode),
                               style: TextStyle(
                                 fontWeight: isSelected
                                     ? FontWeight.w600

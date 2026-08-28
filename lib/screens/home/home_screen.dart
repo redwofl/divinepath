@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../config/app_config.dart';
 import '../../providers/user_provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/mantra_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/ad_service.dart';
 import '../../theme/app_theme.dart';
-import '../../utils/constants.dart';
 import '../../utils/helpers.dart';
 import '../../utils/translations.dart';
 import '../../widgets/common/glass_card.dart';
@@ -49,9 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final totalMalas = mantraProvider.totalMalas;
     final dailyGoal = user?.dailyGoal ?? 108;
 
-    // Get today's verse
+    // Get today's verse (localized to current language)
     final today = DateTime.now().day;
-    final dailyQuote = AppConstants.dailyQuotes[today % AppConstants.dailyQuotes.length];
+    final dailyQuote = Translations.getDailyQuote(today, locale: locCode);
 
     return Scaffold(
       body: SafeArea(
