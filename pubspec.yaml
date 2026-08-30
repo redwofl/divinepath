@@ -1,7 +1,7 @@
 name: divine_path_ai
 description: "DivinePath AI - Your Spiritual Companion App"
 publish_to: 'none'
-version: 1.1.0+3
+version: 1.2.0+4
 
 environment:
   sdk: ^3.5.4

@@ -1,20 +1,24 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../config/app_config.dart';
 
-/// Google AdMob rewarded ads.
+/// Google AdMob banner and interstitial ads.
 ///
-/// Used specifically for the "+1 mala bonus" flow, because Start.io's
-/// rewarded inventory was unreliable for this app. Everything no-ops on
-/// unsupported platforms (web/desktop): [isSupported] is false there and
-/// [showRewarded] returns false without touching the SDK.
+/// Used for the main banner at the bottom and interstitial ads (e.g., game over).
 class AdmobService {
   AdmobService._();
   static final AdmobService instance = AdmobService._();
 
   bool _sdkReady = false;
   bool get isSdkReady => _sdkReady;
+
+  BannerAd? _bannerAd;
+  bool get isBannerReady => _bannerAd != null;
+
+  InterstitialAd? _interstitialAd;
+  bool get isInterstitialReady => _interstitialAd != null;
 
   RewardedAd? _rewardedAd;
   DateTime _lastLoadAttempt = DateTime.fromMillisecondsSinceEpoch(0);
@@ -26,9 +30,6 @@ class AdmobService {
         defaultTargetPlatform == TargetPlatform.iOS;
   }
 
-  /// A rewarded ad is loaded and ready to show right now.
-  bool get isRewardedReady => _rewardedAd != null;
-
   /// Initialize the AdMob SDK (safe to call on any platform).
   Future<void> initialize() async {
     if (!isSupported || _sdkReady) return;
@@ -37,13 +38,14 @@ class AdmobService {
       _sdkReady = true;
       debugPrint('AdMob initialized');
       loadRewarded();
+      loadBannerAd();
+      loadInterstitial();
     } catch (e) {
       debugPrint('AdMob initialize error: $e');
     }
   }
 
-  /// Preload a rewarded ad. [force] bypasses the retry throttle so a user
-  /// tap can trigger an immediate load attempt.
+  /// Load a rewarded ad.
   void loadRewarded({bool force = false}) {
     if (!isSupported || !_sdkReady) return;
     if (_rewardedAd != null) return;
@@ -70,6 +72,9 @@ class AdmobService {
       ),
     );
   }
+
+  /// Whether a rewarded ad is loaded and ready to show.
+  bool get isRewardedReady => _rewardedAd != null;
 
   /// Show the loaded rewarded ad.
   ///
@@ -111,5 +116,81 @@ class AdmobService {
     // Wait until the user closes the ad (or showing fails) before reporting.
     await closed.future.timeout(const Duration(minutes: 3), onTimeout: () {});
     return earned;
+  }
+
+  /// Load a banner ad.
+  void loadBannerAd() {
+    if (!isSupported || !_sdkReady) return;
+    if (_bannerAd != null) _bannerAd!.dispose();
+
+    _bannerAd = BannerAd(
+      adUnitId: AppConfig.admobBannerUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          debugPrint('AdMob banner loaded');
+        },
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('AdMob banner failed to load: $error');
+          ad.dispose();
+          _bannerAd = null;
+        },
+      ),
+    )..load();
+  }
+
+  /// Show the banner widget.
+  Widget getBannerWidget({
+    required double width,
+    required double height,
+  }) {
+    if (!isSupported || !_sdkReady || _bannerAd == null) {
+      return const SizedBox.shrink();
+    }
+    return Container(
+      width: _bannerAd!.size.width.toDouble(),
+      height: _bannerAd!.size.height.toDouble(),
+      child: AdWidget(ad: _bannerAd!),
+    );
+  }
+
+  /// Load an interstitial ad.
+  void loadInterstitial() {
+    if (!isSupported || !_sdkReady) return;
+    InterstitialAd.load(
+      adUnitId: AppConfig.admobInterstitialUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          debugPrint('AdMob interstitial loaded');
+        },
+        onAdFailedToLoad: (error) {
+          debugPrint('AdMob interstitial failed to load: $error');
+          _interstitialAd?.dispose();
+          _interstitialAd = null;
+        },
+      ),
+    );
+  }
+
+  /// Show the interstitial ad if loaded.
+  ///
+  /// Returns true only when the ad was shown.
+  Future<bool> showInterstitial() async {
+    if (!isSupported || !_sdkReady || _interstitialAd == null) return false;
+    final ad = _interstitialAd!;
+    _interstitialAd = null;
+    try {
+      await ad.show();
+      return true;
+    } catch (e) {
+      debugPrint('AdMob interstitial show error: $e');
+      ad.dispose();
+      return false;
+    } finally {
+      loadInterstitial();
+    }
   }
 }

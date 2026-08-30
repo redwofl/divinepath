@@ -6,6 +6,7 @@ import '../../providers/locale_provider.dart';
 import '../../providers/mantra_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/ad_service.dart';
+import '../../services/admob_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/helpers.dart';
 import '../../utils/translations.dart';
@@ -499,6 +500,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 16),
+
+              // Banner ad below Quick Actions
+              if (AdmobService.instance.isSupported)
+                Center(
+                  child: AdmobService.instance.getBannerWidget(
+                    width: double.infinity,
+                    height: 50,
+                  ),
+                ),
+
               const SizedBox(height: 24),
 
               // Recent Activity
@@ -575,7 +587,10 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 24),
 
               // Home banner ad
-              const AdBannerWidget(),
+              AdmobService.instance.getBannerWidget(
+                width: double.infinity,
+                height: 50,
+              ),
 
               const SizedBox(height: 100),
             ],

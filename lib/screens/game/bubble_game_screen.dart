@@ -163,6 +163,9 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
     // Preload AdMob rewarded ad so the extra-life option is ready on game over
     AdmobService.instance.loadRewarded();
 
+    // Preload AdMob interstitial ad so it's ready when the game ends
+    AdmobService.instance.loadInterstitial();
+
     // Pause/resume with tab switches and app lifecycle changes
     WidgetsBinding.instance.addObserver(this);
     bubbleGameTabPaused.addListener(_onTabPauseSignal);
@@ -689,17 +692,15 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
       _isGameOver = true;
     });
 
-    // Show interstitial shortly after the game-over screen renders
-    // (cancelled if the player restarts before it fires). If the ad hasn't
-    // finished loading yet (very fast game), retry once after another delay.
+    // Show AdMob interstitial ad on game over
     _interstitialTimer?.cancel();
     _interstitialTimer = Timer(const Duration(milliseconds: 900), () {
       if (!mounted) return;
-      if (AdService.instance.isInterstitialReady) {
-        AdService.instance.showInterstitial();
+      if (AdmobService.instance.isInterstitialReady) {
+        AdmobService.instance.showInterstitial();
       } else {
         _interstitialTimer = Timer(const Duration(milliseconds: 1500), () {
-          if (mounted) AdService.instance.showInterstitial();
+          if (mounted) AdmobService.instance.showInterstitial();
         });
       }
     });
