@@ -614,14 +614,21 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
 
           // Main content
           SafeArea(
-            child: Column(
-              children: [
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                 // Header
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                   decoration: BoxDecoration(
-                    // Subtle gradient wash behind the header
                     gradient: LinearGradient(
                       colors: [
                         AppColors.primary.withOpacity(isDark ? 0.16 : 0.10),
@@ -633,7 +640,6 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                   ),
                   child: Row(
                     children: [
-                      // Om symbol badge with a soft gradient + glow
                       Container(
                         width: 38,
                         height: 38,
@@ -696,7 +702,6 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                       const SizedBox(width: 8),
                       const LanguageSwitcherButton(),
                       const SizedBox(width: 8),
-                      // Reset
                       if (isCounting)
                         GestureDetector(
                           onTap: () {
@@ -714,7 +719,6 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                           ),
                         ),
                       if (isCounting) const SizedBox(width: 8),
-                      // Mantra selector
                       GestureDetector(
                         onTap: () => _showMantraSelector(provider),
                         child: Container(
@@ -865,17 +869,22 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                     ),
                   ),
 
-                const Spacer(),
+                const SizedBox(height: 16),
 
-                // Mala visualization + tap button (no floating names here anymore)
-                Stack(
+                // Mala visualization + tap button
+                LayoutBuilder(
+                  builder: (context, boxConstraints) {
+                    final malaSize = (boxConstraints.maxWidth * 0.78).clamp(200.0, 300.0);
+                    final tapSize = (malaSize * 0.67).clamp(140.0, 200.0);
+                    final countFontSize = (malaSize * 0.16).clamp(32.0, 48.0);
+                    return Stack(
                   alignment: Alignment.center,
                   clipBehavior: Clip.none,
                   children: [
                     // Circular mala beads
                     SizedBox(
-                      width: 300,
-                      height: 300,
+                      width: malaSize,
+                      height: malaSize,
                       child: CustomPaint(
                         painter: MalaPainter(
                           progress: progress,
@@ -902,8 +911,8 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                               if (autoMode) provider.stopAutoMode();
                             },
                             child: Container(
-                              width: 200,
-                              height: 200,
+                              width: tapSize,
+                              height: tapSize,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 // No fill colour inside — clean transparent ring
@@ -952,7 +961,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                                       Text(
                                         '$currentCount',
                                         style: TextStyle(
-                                          fontSize: 48,
+                                          fontSize: countFontSize,
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.primary,
                                           shadows: [
@@ -1016,6 +1025,8 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                       },
                     ),
                   ],
+                );
+                  },
                 ),
 
                 // Name count display
@@ -1075,7 +1086,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                     ),
                   ),
 
-                const Spacer(),
+                const SizedBox(height: 16),
 
                 // Bottom section
                 Padding(
@@ -1187,6 +1198,10 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                 ),
               ],
             ),
+          ),
+        );
+            },
+          ),
           ),
 
           // Sparkles + celebrations OVERLAY (front, above the main content)

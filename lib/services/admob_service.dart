@@ -30,18 +30,29 @@ class AdmobService {
         defaultTargetPlatform == TargetPlatform.iOS;
   }
 
+  Timer? _initRetryTimer;
+  int _initRetryCount = 0;
+  static const int _maxInitRetries = 3;
+
   /// Initialize the AdMob SDK (safe to call on any platform).
   Future<void> initialize() async {
     if (!isSupported || _sdkReady) return;
     try {
       await MobileAds.instance.initialize();
       _sdkReady = true;
-      debugPrint('AdMob initialized');
+      debugPrint('AdMob initialized successfully');
       loadRewarded();
       loadBannerAd();
       loadInterstitial();
     } catch (e) {
       debugPrint('AdMob initialize error: $e');
+      // Retry initialization with backoff
+      if (_initRetryCount < _maxInitRetries) {
+        _initRetryCount++;
+        final delay = Duration(seconds: 3 * _initRetryCount);
+        _initRetryTimer?.cancel();
+        _initRetryTimer = Timer(delay, () => initialize());
+      }
     }
   }
 
@@ -118,10 +129,15 @@ class AdmobService {
     return earned;
   }
 
-  /// Load a banner ad.
+  Timer? _bannerRetryTimer;
+  int _bannerRetryCount = 0;
+  static const int _maxBannerRetries = 5;
+
+  /// Load a banner ad with automatic retry on failure.
   void loadBannerAd() {
     if (!isSupported || !_sdkReady) return;
-    if (_bannerAd != null) _bannerAd!.dispose();
+    _bannerAd?.dispose();
+    _bannerAd = null;
 
     _bannerAd = BannerAd(
       adUnitId: AppConfig.admobBannerUnitId,
@@ -129,12 +145,22 @@ class AdmobService {
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (ad) {
+          _bannerRetryCount = 0;
           debugPrint('AdMob banner loaded');
         },
         onAdFailedToLoad: (ad, error) {
           debugPrint('AdMob banner failed to load: $error');
           ad.dispose();
           _bannerAd = null;
+          // Retry with exponential backoff
+          if (_bannerRetryCount < _maxBannerRetries) {
+            _bannerRetryCount++;
+            final delay = Duration(seconds: 2 * _bannerRetryCount);
+            _bannerRetryTimer?.cancel();
+            _bannerRetryTimer = Timer(delay, () {
+              if (_sdkReady && _bannerAd == null) loadBannerAd();
+            });
+          }
         },
       ),
     )..load();
@@ -155,7 +181,11 @@ class AdmobService {
     );
   }
 
-  /// Load an interstitial ad.
+  Timer? _interstitialRetryTimer;
+  int _interstitialRetryCount = 0;
+  static const int _maxInterstitialRetries = 5;
+
+  /// Load an interstitial ad with automatic retry on failure.
   void loadInterstitial() {
     if (!isSupported || !_sdkReady) return;
     InterstitialAd.load(
@@ -163,6 +193,7 @@ class AdmobService {
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
+          _interstitialRetryCount = 0;
           _interstitialAd = ad;
           debugPrint('AdMob interstitial loaded');
         },
@@ -170,6 +201,15 @@ class AdmobService {
           debugPrint('AdMob interstitial failed to load: $error');
           _interstitialAd?.dispose();
           _interstitialAd = null;
+          // Retry with exponential backoff
+          if (_interstitialRetryCount < _maxInterstitialRetries) {
+            _interstitialRetryCount++;
+            final delay = Duration(seconds: 2 * _interstitialRetryCount);
+            _interstitialRetryTimer?.cancel();
+            _interstitialRetryTimer = Timer(delay, () {
+              if (_sdkReady && _interstitialAd == null) loadInterstitial();
+            });
+          }
         },
       ),
     );
