@@ -9,10 +9,8 @@ class AppConfig {
   static const bool enableAds = false;
   static const bool enableTestAds = false;
 
-  // AdMob — Set to true to use Google test ads (REQUIRED before Play Store
-  // publish). Production ads will NOT show until the app is listed on a
-  // supported store. Switch to false only after your first Play Store release.
-  static const bool useTestAds = true;
+  // AdMob — Set to true for testing, false for production (Play Store release)
+  static const bool useTestAds = false;
 
   // AdMob App ID
   static const String admobAppId = 'ca-app-pub-3333666454328224~4248449307';
