@@ -60,16 +60,7 @@ flutter {
     source = "../.."
 }
 
-// Pin Start.io native SDK to a version compatible with compileSdk 36
+// Core library desugaring (required by google_mobile_ads / AdMob)
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
-    implementation('com.startapp:inapp-sdk:5.2.6') {
-        exclude group: 'com.android.support'
-    }
-}
-
-configurations.all {
-    resolutionStrategy {
-        force 'com.startapp:inapp-sdk:5.2.6'
-    }
 }

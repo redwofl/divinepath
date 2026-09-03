@@ -1,7 +1,7 @@
 name: divine_path_ai
 description: "DivinePath AI - Your Spiritual Companion App"
 publish_to: 'none'
-version: 1.2.0+4
+version: 1.2.2+6
 
 environment:
   sdk: ^3.5.4
@@ -48,9 +48,6 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   page_transition: ^2.1.0
   flutter_native_splash: ^2.4.1
-
-  # Ads (Start.io)
-  startapp_sdk: ^1.0.1
 
   # Ads (Google AdMob — rewarded ads for the mala bonus)
   google_mobile_ads: ^6.0.0

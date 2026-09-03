@@ -5,7 +5,6 @@ import '../../providers/user_provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/mantra_provider.dart';
 import '../../providers/theme_provider.dart';
-import '../../services/ad_service.dart';
 import '../../services/admob_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/helpers.dart';

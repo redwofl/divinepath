@@ -371,7 +371,7 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
 
   /// Show a rewarded ad and grant +1 mala of bonus chants on completion.
   ///
-  /// Uses Google AdMob (Start.io rewarded inventory was unreliable here).
+  /// Uses Google AdMob rewarded ads.
   /// A single tap reliably opens exactly ONE ad: if the ad isn't loaded yet it
   /// is queued and presented automatically the moment it's ready (instead of
   /// asking the user to tap again), and [_isWatchingAd] blocks any double-tap
@@ -869,14 +869,16 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                     ),
                   ),
 
-                const SizedBox(height: 16),
+                // Extra space above the mala circle pushes it further down so
+                // the tap zone is easier to reach with one hand / thumb.
+                const SizedBox(height: 96),
 
                 // Mala visualization + tap button
                 LayoutBuilder(
                   builder: (context, boxConstraints) {
-                    final malaSize = (boxConstraints.maxWidth * 0.78).clamp(200.0, 300.0);
-                    final tapSize = (malaSize * 0.67).clamp(140.0, 200.0);
-                    final countFontSize = (malaSize * 0.16).clamp(32.0, 48.0);
+                    final malaSize = (boxConstraints.maxWidth * 0.88).clamp(220.0, 340.0);
+                    final tapSize = (malaSize * 0.72).clamp(160.0, 230.0);
+                    final countFontSize = (malaSize * 0.17).clamp(34.0, 52.0);
                     return Stack(
                   alignment: Alignment.center,
                   clipBehavior: Clip.none,
@@ -1415,25 +1417,25 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
   }) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: AppColors.primary.withOpacity(0.08),
           ),
           boxShadow: [
             BoxShadow(
               color: AppColors.primary.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.primary, size: 20),
-            const SizedBox(height: 6),
+            Icon(icon, color: AppColors.primary, size: 13),
+            const SizedBox(height: 2),
             // FittedBox keeps large numbers on one line so all three cards stay equal height
             FittedBox(
               fit: BoxFit.scaleDown,
@@ -1441,30 +1443,30 @@ class _MantraCounterScreenState extends State<MantraCounterScreen>
                 value,
                 maxLines: 1,
                 style: const TextStyle(
-                  fontSize: 22,
+                  fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 1),
             Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 11,
+                fontSize: 8,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textSecondary,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 1),
             Text(
               sub,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 10,
+                fontSize: 7,
                 fontWeight: FontWeight.w500,
                 color: AppColors.primary.withOpacity(0.7),
               ),

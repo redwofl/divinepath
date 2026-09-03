@@ -50,6 +50,10 @@ android/app/*.jks
 # Sound WAV originals (regenerable via tool/generate_meditation_sounds.py)
 tool/sounds_wav_backup/
 
+# Asset backups (not part of the app)
+assets/sounds_backup/
+assets/icons/app_icon_backup.png
+
 # Build outputs & local tooling
 android/build/
 temp_anr.txt/

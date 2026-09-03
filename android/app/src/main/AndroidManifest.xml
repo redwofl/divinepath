@@ -34,11 +34,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Start.io App ID (mandatory for the ad SDK) -->
-        <meta-data
-            android:name="com.startapp.sdk.APPLICATION_ID"
-            android:value="207265983" />
-
         <!-- Google AdMob App ID (mandatory for google_mobile_ads; rewarded ads) -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

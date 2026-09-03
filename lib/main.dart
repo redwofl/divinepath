@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +14,6 @@ import 'services/firebase_service.dart';
 import 'services/gemini_service.dart';
 import 'services/audio_service.dart';
 import 'services/notification_service.dart';
-import 'services/ad_service.dart';
 import 'services/admob_service.dart';
 import 'utils/helpers.dart';
 import 'config/app_config.dart';
@@ -62,13 +60,6 @@ void main() async {
     }
   } catch (e) {
     debugPrint('Notifications not available: $e');
-  }
-
-  // Initialize ads (disabled in this clean build; no-op until ads are configured)
-  try {
-    await AdService.instance.initialize();
-  } catch (e) {
-    debugPrint('Ads not available: $e');
   }
 
   // Initialize AdMob (rewarded ads for the mala bonus; no-ops off mobile)
@@ -141,10 +132,6 @@ void main() async {
     chatProvider: chatProvider,
     tapSoundProvider: tapSoundProvider,
   ));
-
-  // Show the app-open ad shortly after launch (cold start), if loaded and
-  // not within the interval cap. Fire-and-forget; never blocks startup.
-  unawaited(AdService.instance.showAppOpenOnStartup());
 }
 
 class DivinePathApp extends StatelessWidget {

@@ -5,10 +5,6 @@ class AppConfig {
   // Dev toggles
   static const bool useSampleStoriesOnly = true;
 
-  // Start.io ads
-  static const bool enableAds = false;
-  static const bool enableTestAds = false;
-
   // AdMob — Set to true for testing, false for production (Play Store release)
   static const bool useTestAds = false;
 

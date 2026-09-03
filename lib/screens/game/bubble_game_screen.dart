@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../providers/locale_provider.dart';
-import '../../services/ad_service.dart';
 import '../../services/admob_service.dart';
 import '../../services/audio_service.dart';
 import '../../utils/translations.dart';
@@ -280,9 +279,6 @@ class _BubbleGameScreenState extends State<BubbleGameScreen>
     // Start gentle ambient meditation music on loop
     AudioService.instance
         .playAmbientSound('assets/sounds/ambient.mp3', isAsset: true);
-
-    // Preload interstitial so it's ready when the game ends
-    AdService.instance.loadInterstitial();
 
     _gameLoopController.repeat();
 
